@@ -12,16 +12,6 @@
 with import ./release-lib.nix {inherit supportedSystems; };
 
 let
-  jobsForDerivations = attrset: pkgs.lib.attrsets.listToAttrs
-    (map
-      (name: { inherit name;
-               value = { type = "job"; systems = ["x86_64-linux"]; schedulingPriority = 4; };})
-      (builtins.attrNames
-        (pkgs.lib.attrsets.filterAttrs
-          (n: v: (v.type or null) == "derivation")
-          attrset)));
-
-
   jobs =
     {
 
