@@ -76,7 +76,7 @@ self: super: {
   ghc-typelits-natnormalise = dontDistribute super.ghc-typelits-natnormalise;
 
   # Needs directory >= 1.2.2.0.
-  idris = dontDistribute super.idris;
+  idris = markBroken super.idris;
 
   # Newer versions require transformers 0.4.x.
   seqid = super.seqid_0_1_0;
