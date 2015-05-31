@@ -25,13 +25,17 @@ stdenv.mkDerivation rec {
     sha1 = "20f52c37e099cb2b21f3a76c6e39fe698e1e79e8";
   };
 
+  nativeBuildInputs =
+    [ pkgconfig perl file python yasm pysqlite zip unzip makeWrapper
+    ];
+
   buildInputs =
-    [ pkgconfig gtk perl zip libIDL libjpeg zlib bzip2
-      python dbus dbus_glib pango freetype fontconfig xlibs.libXi
-      xlibs.libX11 xlibs.libXrender xlibs.libXft xlibs.libXt file
-      alsaLib nspr nss libnotify xlibs.pixman yasm mesa
-      xlibs.libXScrnSaver xlibs.scrnsaverproto pysqlite
-      xlibs.libXext xlibs.xextproto sqlite unzip makeWrapper
+    [ gtk libIDL libjpeg zlib bzip2
+      dbus dbus_glib pango freetype fontconfig xlibs.libXi
+      xlibs.libX11 xlibs.libXrender xlibs.libXft xlibs.libXt
+      alsaLib nspr nss libnotify xlibs.pixman mesa
+      xlibs.libXScrnSaver xlibs.scrnsaverproto
+      xlibs.libXext xlibs.xextproto sqlite
       hunspell libevent libstartup_notification libvpx cairo
       gstreamer gst_plugins_base icu
     ];
