@@ -1,5 +1,5 @@
 { lib, stdenv, fetchurl, pkgconfig, gtk, pango, perl, python, zip, libIDL
-, libjpeg, zlib, dbus, dbus_glib, bzip2, xlibs
+, libjpeg, libpng, zlib, dbus, dbus_glib, bzip2, xlibs
 , freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
 , yasm, mesa, sqlite, unzip, makeWrapper, pysqlite
 , hunspell, libevent, libstartup_notification, libvpx
@@ -30,7 +30,7 @@ stdenv.mkDerivation rec {
     ];
 
   buildInputs =
-    [ gtk libIDL libjpeg zlib bzip2
+    [ libpng gtk libIDL libjpeg zlib bzip2
       dbus dbus_glib pango freetype fontconfig xlibs.libXi
       xlibs.libX11 xlibs.libXrender xlibs.libXft xlibs.libXt
       alsaLib nspr nss libnotify xlibs.pixman mesa
@@ -50,8 +50,8 @@ stdenv.mkDerivation rec {
       "--with-system-nss"
       "--with-system-libevent"
       "--with-system-libvpx"
-      # "--with-system-png" # needs APNG support
-      # "--with-system-icu" # causes ‘ar: invalid option -- 'L'’ in Firefox 28.0
+      "--with-system-png"
+      "--with-system-icu"
       "--enable-system-ffi"
       "--enable-system-hunspell"
       "--enable-system-pixman"

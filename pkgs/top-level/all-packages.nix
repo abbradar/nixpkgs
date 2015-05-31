@@ -11143,6 +11143,7 @@ let
   firefox = callPackage ../applications/networking/browsers/firefox {
     inherit (gnome) libIDL;
     inherit (pythonPackages) pysqlite;
+    libpng = libpng_apng;
   };
 
   firefoxWrapper = wrapFirefox { browser = pkgs.firefox; };
