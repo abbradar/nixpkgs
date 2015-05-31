@@ -3,7 +3,7 @@
 , freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
 , yasm, mesa, sqlite, unzip, makeWrapper, pysqlite
 , hunspell, libevent, libstartup_notification, libvpx
-, cairo, gstreamer, gst_plugins_base, icu
+, cairo, gstreamer, gst_plugins_base, icu, libpulseaudio
 , debugBuild ? false
 , # If you want the resulting program to call itself "Firefox" instead
   # of "Shiretoko" or whatever, enable this option.  However, those
@@ -34,6 +34,7 @@ stdenv.mkDerivation rec {
       xlibs.libXext xlibs.xextproto sqlite unzip makeWrapper
       hunspell libevent libstartup_notification libvpx cairo
       gstreamer gst_plugins_base icu
+      libpulseaudio # only headers are needed
     ];
 
   configureFlags =
@@ -62,7 +63,6 @@ stdenv.mkDerivation rec {
       "--disable-necko-wifi" # maybe we want to enable this at some point
       "--disable-installer"
       "--disable-updater"
-      "--disable-pulseaudio"
     ]
     ++ (if debugBuild then [ "--enable-debug" "--enable-profiling"]
                       else [ "--disable-debug" "--enable-release"
