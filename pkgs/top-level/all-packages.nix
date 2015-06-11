@@ -6140,6 +6140,7 @@ let
   libgit2 = callPackage ../development/libraries/git2 { };
 
   glew = callPackage ../development/libraries/glew { };
+  glew110 = callPackage ../development/libraries/glew/1.10.nix { };
 
   glfw = glfw3;
   glfw2 = callPackage ../development/libraries/glfw/2.x.nix { };
