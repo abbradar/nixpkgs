@@ -10007,7 +10007,6 @@ let
     cross = assert crossSystem != null; crossSystem;
   });
 
-  udev145 = callPackage ../os-specific/linux/udev/145.nix { };
   udev = pkgs.systemd;
   eudev = callPackage ../os-specific/linux/eudev {};
 
