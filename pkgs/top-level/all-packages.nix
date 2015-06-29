@@ -7626,9 +7626,7 @@ let
     sslSupport = true;
   };
 
-  nethack = builderDefsPackage (import ../games/nethack) {
-    inherit ncurses flex bison;
-  };
+  nethack = callPackage ../games/nethack { };
 
   nettle27 = callPackage ../development/libraries/nettle/27.nix { };
   nettle = callPackage ../development/libraries/nettle { };
