@@ -1,17 +1,15 @@
-{ stdenv, fetchFromGitHub, utillinux }:
+{ stdenv, fetchFromGitHub }:
 
-stdenv.mkDerivation rec {
-  name = "filter_audio-${version}";
-  version = "76428a6cda43ae77f3936f4527c5f86eb3a5e211";
+stdenv.mkDerivation {
+  name = "filter_audio-20150628";
 
   src = fetchFromGitHub {
     owner  = "irungentoo";
     repo   = "filter_audio";
-    rev    = "${version}";
-    sha256 = "0c4wp9a7dzbj9ykfkbsxrkkyy0nz7vyr5map3z7q8bmv9pjylbk9";
+    rev    = "612c5a102550c614e4c8f859e753ea64c0b7250c";
+    sha256 = "ca160b2ef6a55e7f075fb308d3f4622423d34bc39c6e6a86376b936c7b43ae2e";
   };
 
-  buildInputs = [ utillinux ];
   makeFlags = "PREFIX=$(out)";
 
   meta = with stdenv.lib; {
