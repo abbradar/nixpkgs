@@ -1,39 +1,39 @@
-{ stdenv, fetchFromGitHub, pkgconfig, libtoxcore, qt5, openal, opencv
-, libsodium, libXScrnSaver }:
+{ stdenv, fetchFromGitHub, pkgconfig, libtoxcore, qt5, openalSoft
+, libsodium, libXScrnSaver, glib, gdk_pixbuf, gtk2, cairo, pango, atk
+, qrencode, ffmpeg, filter_audio }:
 
-let
-
-  filteraudio = stdenv.mkDerivation rec {
-    name = "filter_audio-20150128";
-
-    src = fetchFromGitHub {
-      owner = "irungentoo";
-      repo = "filter_audio";
-      rev = "76428a6cda";
-      sha256 = "0c4wp9a7dzbj9ykfkbsxrkkyy0nz7vyr5map3z7q8bmv9pjylbk9";
-    };
-
-    doCheck = false;
-
-    makeFlags = "PREFIX=$(out)";
-  };
-
-in stdenv.mkDerivation rec {
-  name = "qtox-dev-20150130";
+stdenv.mkDerivation rec {
+  name = "qtox-${version}";
+  version = "1.1";
 
   src = fetchFromGitHub {
     owner = "tux3";
     repo = "qTox";
-    rev = "7574569b3d";
-    sha256 = "0a7zkhl4w2r5ifzs7vwws2lpplp6q5c4jllyf4ld64njgiz6jzip";
+    rev = "v${version}";
+    sha256 = "1i9q3s6fm6w7njzrvmhy2dbdj0x4skpx1c7m6r1hjlhmii8ywbsn";
   };
+
+  NIX_CFLAGS_COMPILE = [ "-I${glib}/lib/glib-2.0/include"
+                         "-I${glib}/include/glib-2.0"
+                         "-I${gdk_pixbuf}/include/gdk-pixbuf-2.0"
+                         "-I${gtk2}/include/gtk-2.0"
+                         "-I${gtk2}/lib/gtk-2.0/include"
+                         "-I${cairo}/include/cairo"
+                         "-I${pango}/include/pango-1.0"
+                         "-I${atk}/include/atk-1.0"
+                       ];
 
   buildInputs =
     [
-      libtoxcore openal opencv libsodium filteraudio
-      qt5.base qt5.tools libXScrnSaver
+      libtoxcore openalSoft filter_audio qt5.base
+      glib libXScrnSaver gdk_pixbuf gtk2 cairo
+      libsodium qrencode ffmpeg
     ];
-  nativeBuildInputs = [ pkgconfig ];
+  nativeBuildInputs = [ qt5.tools ];
+
+  postPatch = ''
+    #sed -i "s,/usr/,/this-does-not-exist/,g" qtox.pro
+  '';
 
   configurePhase = "qmake";
 
