@@ -1,37 +1,23 @@
-{ stdenv, fetchFromGitHub, pkgconfig, libtoxcore, dbus, libvpx, libX11, openal, freetype, libv4l
-, libXrender, fontconfig, libXext, libXft }:
+{ stdenv, fetchFromGitHub, pkgconfig, libtoxcore, dbus, libvpx, libX11, openalSoft, freetype, libv4l
+, libXrender, fontconfig, libXext, libXft, filter_audio }:
 
-let
-
-  filteraudio = stdenv.mkDerivation rec {
-    name = "filter_audio-20150128";
-
-    src = fetchFromGitHub {
-      owner = "irungentoo";
-      repo = "filter_audio";
-      rev = "76428a6cda";
-      sha256 = "0c4wp9a7dzbj9ykfkbsxrkkyy0nz7vyr5map3z7q8bmv9pjylbk9";
-    };
-
-    doCheck = false;
-
-    makeFlags = "PREFIX=$(out)";
-  };
-
-in stdenv.mkDerivation rec {
-  name = "utox-dev-20150130";
+stdenv.mkDerivation rec {
+  name = "utox-${version}";
+  version = "0.3.2";
 
   src = fetchFromGitHub {
     owner = "notsecure";
     repo = "uTox";
-    rev = "cb7b8d09b08";
-    sha256 = "0vg9h07ipwyf7p54p43z9bcymy0skiyjbm7zvyjg7r5cvqxv1vpa";
+    rev = "v${version}";
+    sha256 = "1cwz4fbqhazybdjcwzwcws6zn996mgg26v9b8mbdls571sjbbqfl";
   };
 
-  buildInputs = [ pkgconfig libtoxcore dbus libvpx libX11 openal freetype
-                  libv4l libXrender fontconfig libXext libXft filteraudio ];
+  nativeBuildInputs = [ pkgconfig ];
 
-  doCheck = false;
+  buildInputs = [ dbus libtoxcore fontconfig freetype openalSoft libv4l
+                  libX11 libXext libXrender filter_audio ];
+
+  #doCheck = false;
   
   makeFlags = "PREFIX=$(out)";
 
