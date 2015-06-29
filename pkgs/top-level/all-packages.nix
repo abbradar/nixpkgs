@@ -8269,6 +8269,8 @@ let
     gnutls = gnutls;
   });
 
+  unnethack = callPackage ../games/unnethack { };
+
   v8_3_16_14 = callPackage ../development/libraries/v8/3.16.14.nix {
     inherit (pythonPackages) gyp;
     stdenv = overrideCC stdenv gcc48;
