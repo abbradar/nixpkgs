@@ -1820,6 +1820,8 @@ let
     inherit (perlPackages) MailIMAPClient;
   };
 
+  imgurbash = callPackage ../tools/graphics/imgurbash { };
+
   inadyn = callPackage ../tools/networking/inadyn { };
 
   inetutils = callPackage ../tools/networking/inetutils { };
