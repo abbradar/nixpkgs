@@ -306,6 +306,13 @@ let
       inherit ruby;
       inherit bundler;
 
+      vars = {
+        BUNDLE_GEMFILE = "${derivation.bundle}/Gemfile";
+        GEM_HOME = "${derivation}/${ruby.gemPath}";
+        NIX_BUNDLER_GEMPATH = "${bundler}/${ruby.gemPath}";
+        GEM_PATH = "${bundler}/${ruby.gemPath}:${derivation}/${ruby.gemPath}";
+      };
+
       env = let
         irbrc = builtins.toFile "irbrc" ''
           if not ENV["OLD_IRBRC"].empty?
@@ -318,10 +325,7 @@ let
           name = "interactive-${name}-environment";
           nativeBuildInputs = [ ruby derivation ];
           shellHook = ''
-            export BUNDLE_GEMFILE=${derivation.bundle}/Gemfile
-            export GEM_HOME=${derivation}/${ruby.gemPath}
-            export NIX_BUNDLER_GEMPATH=${bundler}/${ruby.gemPath}
-            export GEM_PATH=$NIX_BUNDLER_GEMPATH:$GEM_HOME
+            ${lib.concatStringsSep ";" (lib.mapAttrsToList (k: v: "export ${k}=${v}") derivation.vars)}
             export OLD_IRBRC="$IRBRC"
             export IRBRC=${irbrc}
           '';
