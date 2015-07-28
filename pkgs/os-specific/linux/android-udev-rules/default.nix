@@ -1,7 +1,7 @@
 { stdenv, fetchgit }:
 
 stdenv.mkDerivation {
-  name = "android-udev-rules-2015-02-28";
+  name = "android-udev-rules-2015-03-01";
 
   src = fetchgit {
     url = "git://github.com/M0Rf30/android-udev-rules";
