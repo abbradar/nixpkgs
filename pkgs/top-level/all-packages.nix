@@ -7197,6 +7197,8 @@ let
 
   libomxil-bellagio = callPackage ../development/libraries/libomxil-bellagio { };
 
+  liboobs = callPackage ../development/libraries/liboobs { };
+
   liboop = callPackage ../development/libraries/liboop { };
 
   libopus = callPackage ../development/libraries/libopus { };
