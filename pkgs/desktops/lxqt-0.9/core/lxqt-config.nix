@@ -1,46 +1,33 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt
+, pkgconfig
 , cmake
 , libpthreadstubs
 , libXdmcp
 , libxcb
 , libXcursor
-, qt54
+, qt
 , kwindowsystem
 , liblxqt
 , libqtxdg
-, standardPatch
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "lxqt-config";
   version = "0.9.0";
-  name = "${basename}-${version}";
+  sha256 = "04xrhhzvp7xcs135n2dxny5714iv702cw1jq5k3dkibahhhhsswx";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "f4c15db2d9e9fb130d58ed691a4a6be886d933ef";
-    sha256 = "80b3c357f6ca1328ce5dc6c63039869e38680b96758daa5d1f2f5e0d73f441ad";
-  };
-
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
+    pkgconfig
     cmake
-    qt54.base qt54.tools qt54.x11extras
-    kwindowsystem
-    libpthreadstubs libXdmcp libxcb libXcursor
-    liblxqt libqtxdg libxcb
+    qt.tools
   ];
 
-  # Need to override /etc/xdg
-  patchPhase = ''
-    substituteInPlace src/CMakeLists.txt --replace /etc/xdg etc/xdg
-  '' + standardPatch;
+  buildInputs = [
+    libpthreadstubs libXdmcp libxcb libXcursor
+    liblxqt libxcb
+  ];
 
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "System configuration (control center)";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  patches = [ ./lxqt-config.patch ];
+
+  meta.description = "System configuration (control center)";
 }

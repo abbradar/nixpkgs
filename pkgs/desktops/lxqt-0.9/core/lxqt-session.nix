@@ -1,44 +1,24 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt
+, pkgconfig
 , cmake
-, libpthreadstubs, libXdmcp
-, qt54
-, kwindowsystem
-, libqtxdg
+, qt
 , liblxqt
-, standardPatch
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "lxqt-session";
   version = "0.9.0";
-  name = "${basename}-${version}";
+  sha256 = "01hxand1gqbcaw14lh7z6w5zssgfaffcjncv752c2c7272wzyhy5";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "9877c3be90d00b94020ddd131a983864e1a77a62";
-    sha256 = "75344026c533648f63790f8c50978c65cb0ecceb382ab793ca6c991b1072c6cc";
-  };
-
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
+    pkgconfig
     cmake
-    qt54.base qt54.tools qt54.x11extras
-    libpthreadstubs libXdmcp
-    kwindowsystem
-    libqtxdg liblxqt
+    qt.tools
   ];
 
-  patchPhase = standardPatch;
+  buildInputs = [
+    liblxqt
+  ];
 
-#  preConfigure = ''
-#    cmakeFlags="-DLIB_SUFFIX="
-#  '';
-
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "session manager";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "Session manager";
 }

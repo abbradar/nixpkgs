@@ -1,39 +1,27 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt
+, pkgconfig
 , cmake
-, qt54
-, lxqt-libfm
+, qt
+, libfm
 , menu-cache
-, libpthreadstubs
-, libXdmcp
-, standardPatch
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "pcmanfm-qt";
   version = "0.9.0";
-  name = "lxqt-${basename}-${version}";
+  sha256 = "1pz245jc8ck7p7zrlfdkjyl8wv6nmsr5l98ifdpfxycjq2hg1w1d";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "d73a7b33a693b769e0bcb026192cc87965778aa4";
-    sha256 = "6b4d0ce3064861b58e5ef0d26f9e7cff0b286a030b3d40bf41a483107093fc10";
-  };
-
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
+    pkgconfig
     cmake
-    qt54.base qt54.tools qt54.x11extras
-    lxqt-libfm menu-cache
-    libpthreadstubs libXdmcp
+    qt.tools
   ];
 
-  patchPhase = standardPatch;
+  buildInputs = [
+    qt.base qt.x11extras
+    libfm
+    menu-cache
+  ];
 
-  meta = {
-    homepage = "http://wiki.lxde.org/en/PCManFM";
-    description = "file manager";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "File manager";
 }

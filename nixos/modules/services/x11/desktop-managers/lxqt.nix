@@ -32,14 +32,14 @@ in
 
     environment.systemPackages = [
       pkgs.kde5.oxygen-icons
-      pkgs.lxqt.lxqt-libfm-extras
-      pkgs.lxqt.menu-cache
-      pkgs.lxqt.lxmenu-data
-      pkgs.lxqt.lxqt-libfm
-      pkgs.lxqt.libqtxdg
-      pkgs.lxqt.liblxqt
-      pkgs.lxqt.liblxqt-mount
-      pkgs.lxqt.libsysstat
+      pkgs.hicolor_icon_theme
+      #pkgs.lxqt.lxmenu-data
+      pkgs.which
+      #pkgs.libfm
+      #pkgs.libfm.override { extraOnly = true; }
+      #pkgs.lxqt.libqtxdg
+      #pkgs.lxqt.liblxqt
+      #pkgs.lxqt.liblxqt-mount
       pkgs.lxqt.lxqt-session
       pkgs.lxqt.lxqt-qtplugin
       pkgs.lxqt.lxqt-globalkeys
@@ -49,18 +49,22 @@ in
       pkgs.lxqt.lxqt-config
       pkgs.lxqt.lxqt-openssh-askpass
       pkgs.lxqt.lxqt-panel
-      pkgs.lxqt.lxqt-polkit_qt_1
       pkgs.lxqt.lxqt-policykit
-      pkgs.lxqt.lxqt-powermanagement
       pkgs.lxqt.lxqt-runner
-      pkgs.lxqt.lxqt-pcmanfm-qt
-      #pkgs.lxqt.compton-conf
+      pkgs.lxqt.lxqt-session
+      pkgs.lxqt.pcmanfm-qt
       pkgs.lxqt.lximage-qt
-    ];
+      #pkgs.lxqt.compton-conf
+    ] ++ optional config.powerManagement.enable pkgs.lxqt.lxqt-powermanagement
+      ++ optional config.services.xserver.windowManager.openbox.enable pkgs.lxqt.obconf-qt;
 
     # Link some extra directories in /run/current-system/software/share
     environment.pathsToLink =
       [ "/share/lxqt" "/share/desktop-directories" ];
+
+    # Enable helpful DBus services.
+    services.udisks2.enable = true;
+    services.upower.enable = config.powerManagement.enable;
 
   };
 

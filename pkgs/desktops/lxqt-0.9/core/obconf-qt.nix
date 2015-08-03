@@ -1,34 +1,35 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt, fetchFromGitHub
+, pkgconfig
 , cmake
-, qt54
+, qt
 , libconfig
+, openbox
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt rec {
   basename = "obconf-qt";
-  version = "0.1.0";
-  name = "${basename}-${version}";
+  version = "0.9.0";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "064f51c3d5b29f0f71bfc3e10946314c64db35e3";
-    sha256 = "71b6198a26443f0a99b1add28e9a1b8d0c20d28c83f97902b58287879dcd6861";
+  src = fetchFromGitHub {
+    owner = "lxde";
+    repo = basename;
+    rev = version;
+    sha256 = "1ywjfi2kkrwa840gwd75z3pmly3q28ilddq6mkkncbkb0av5byb8";
   };
 
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
+    pkgconfig
     cmake
-    qt54.base qt54.tools
-    libconfig
+    qt.tools
   ];
 
-  preConfigure = ''cmakeFlags="-DUSE_QT5=ON"'';
+  buildInputs = [
+    qt.base qt.x11extras
+    libconfig
+    openbox
+  ];
 
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "X composite manager configuration (for compton)";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  cmakeFlags = [ "-DUSE_QT5=ON" ];
+
+  meta.description = "X composite manager configuration (for Openbox)";
 }

@@ -1,26 +1,17 @@
-{ stdenv, fetchgit
+{ mkLxqt
 , cmake
-, qt54
+, qt
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "libsysstat";
   version = "0.3.0";
-  name = "${basename}-${version}";
+  lxqtBundled = false;
+  sha256 = "061704pzhvbbzzrqbj5qpx0ayb26d8snnm83gjq7lm1f3jn0ar5b";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "70f70eb97e5b144a63468ea78b6c436bf43cf571";
-    sha256 = "25fb7a51106e3753c24c7dffa7ed6a226385936b76136da928e4cc518cdd7389";
-  };
+  nativeBuildInputs = [ cmake qt.tools ];
 
-  buildInputs = [ stdenv cmake qt54.base qt54.tools ];
+  buildInputs = [ qt.base ];
 
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "Library used to query system statistics (net status, system resource usage, ...etc)";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "Library used to query system statistics (net status, system resource usage, ...etc)";
 }

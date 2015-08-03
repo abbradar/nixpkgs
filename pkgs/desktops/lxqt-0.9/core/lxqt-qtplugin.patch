@@ -1,0 +1,32 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index d65d813..8776b2a 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -19,16 +19,18 @@ target_link_libraries(qtlxqt
+ # This directly returns the platformthemes dir. However, this does not work
+ # in some distros, such as ubuntu.
+ # Finally, I came up with a more reliable way by using qmake.
+-get_target_property(QT_QMAKE_EXECUTABLE ${Qt5Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
+-if(NOT QT_QMAKE_EXECUTABLE)
+-    message(FATAL_ERROR "qmake is not found.")
+-endif()
++if(NOT QT_PLUGINS_DIR)
++    get_target_property(QT_QMAKE_EXECUTABLE ${Qt5Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
++    if(NOT QT_QMAKE_EXECUTABLE)
++        message(FATAL_ERROR "qmake is not found.")
++    endif()
+ 
+-# execute the command "qmake -query QT_INSTALL_PLUGINS" to get the path of plugins dir.
+-execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_PLUGINS
+-    OUTPUT_VARIABLE QT_PLUGINS_DIR
+-    OUTPUT_STRIP_TRAILING_WHITESPACE
+-)
++    # execute the command "qmake -query QT_INSTALL_PLUGINS" to get the path of plugins dir.
++    execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_PLUGINS
++        OUTPUT_VARIABLE QT_PLUGINS_DIR
++        OUTPUT_STRIP_TRAILING_WHITESPACE
++    )
++endif()
+ if(QT_PLUGINS_DIR)
+     message(STATUS "Qt5 plugin directory:" "${QT_PLUGINS_DIR}")
+ else()

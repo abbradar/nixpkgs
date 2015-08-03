@@ -1,42 +1,26 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt
 , cmake
-, qt54
-, kwindowsystem
+, qt
 , liblxqt
-, libqtxdg
-, standardPatch
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "lxqt-qtplugin";
   version = "0.9.0";
-  name = "${basename}-${version}";
+  sha256 = "1ia3calcl6m8qixvdz9yaadagckr3d23zcl9vib46yygbkaibivv";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "f1a07120b6d74068c5d3a14babbd5d05f44d2750";
-    sha256 = "a8aaca118699ef81573fc13a59d8ba0ea829b544b466755aaab9f74b188d9b67";
-  };
-
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
     cmake
-    qt54.base qt54.tools qt54.x11extras
-    kwindowsystem
-    liblxqt libqtxdg
+    qt.tools
   ];
 
-  # Need to override the QT_PLUGINS_DIR variable from qt5
-  patchPhase = ''
-    PATTERN=\$\{QT_PLUGINS_DIR}
-    substituteInPlace src/CMakeLists.txt --replace "$PATTERN" $out/lib/qt5/plugins
-  '' + standardPatch;
+  buildInputs = [
+    liblxqt
+  ];
 
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "LxQt platform integration plugin for Qt5 (let all Qt programs apply LxQt settings)";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  patches = ./lxqt-qtplugin.patch;
+  
+  cmakeFlags = [ "-DQT_PLUGINS_DIR=lib/qt5/plugins" ];
+
+  meta.description = "LxQt platform integration plugin for Qt5 (let all Qt programs apply LxQt settings)";
 }

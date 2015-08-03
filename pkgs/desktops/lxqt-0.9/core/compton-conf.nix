@@ -1,34 +1,30 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt, fetchgit
+, pkgconfig
 , cmake
-, qt54
+, qt
 , libconfig
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "compton-conf";
-  version = "0.1.x";
-  name = "${basename}-${version}";
+  version = "2015-06-26";
 
   src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "5a41cd8a5a7bc22198f2f58a4eb9738a8d8dbeed";
-    sha256 = "26dd33cb74da8d2d8d3a1e805d5db54bf3707096ab39f073d15442a36820931d";
+    url = "https://github.com/lxde/compton-conf";
+    rev = "8ae8fbb95e2958adeaac681077a2751a1a776a07";
+    sha256 = "04a9aa914befa9335b7d6c8a264ac2fa87cc902327c71fb253e17b16348aa674";
   };
 
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
+    pkgconfig
     cmake
-    qt54.base qt54.tools
+    qt.tools
+  ];
+
+  buildInputs = [
+    qt.base
     libconfig
   ];
 
-  preConfigure = ''cmakeFlags="-DUSE_QT5=ON"'';
-
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "X composite manager configuration (for compton)";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "X composite manager configuration (for compton)";
 }

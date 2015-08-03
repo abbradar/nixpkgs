@@ -1,28 +1,19 @@
-{ stdenv, fetchgit
+{ mkLxqt, fetchurl
 , cmake
 , file # libmagic.so
-, qt54
+, qt
 , pkgconfig
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt rec {
   basename = "libqtxdg";
   version = "1.2.0";
-  name = "${basename}-${version}";
+  lxqtBundled = false;
+  sha256 = "1ncqs0lcll5nx69hxfg33m3jfkryjqrjhr2kdci0b8pyaqdv1jc8";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "da936792f2376327db2c287348738ede394e7bcc";
-    sha256 = "c676491c655d6af5d250a8855e0d7437ac53505f40640dd7e71bd1c08646b55f";
-  };
+  nativeBuildInputs = [ cmake pkgconfig ];
 
-  buildInputs = [ stdenv cmake qt54.base file pkgconfig ];
+  buildInputs = [ qt.base file ];
 
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "Library providing freedesktop.org specs implementations for Qt";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "Library providing freedesktop.org specs implementations for Qt";
 }

@@ -1,29 +1,41 @@
 { pkgs, newScope }: let
 
-callPackage = newScope (deps // lxqt_self);
+callPackage = newScope (deps // lxqtSelf);
 
 deps = rec { # lxqt-global dependency overrides should be here
 #  inherit (pkgs.gnome) libglade libwnck vte gtksourceview;
 #  inherit (pkgs.perlPackages) URI;
 };
 
-lxqt_self = rec {
+lxqtSelf = rec {
 
   #### NixOS support
 
-  inherit (pkgs) gvfs;
-  #xinitrc = "${lxqtsession}/etc/xdg/lxqt/xinitrc";
+  # Inputs for callPackage arguments
+  inherit (pkgs.kde5) kwindowsystem kguiaddons;
+  qt = pkgs.qt54;
 
-  # Inputs for callPacakage arguments
-  kwindowsystem = pkgs.kde5.kwindowsystem;
-  kguiaddons = pkgs.kde5.kguiaddons;
-  standardPatch = ''
-    for file in $(find . -name CMakeLists.txt); do
-      substituteInPlace $file \
-        --replace DESTINATION\ \$\{LXQT_ETC_XDG_DIR} 'DESTINATION etc/xdg' \
-        --replace DESTINATION\ \$\{LXQT_SHARE_DIR} 'DESTINATION share/lxqt'
-    done
-  '';
+  mkLxqt = super: pkgs.stdenv.mkDerivation (
+    let version = "0.9.1";
+        self = pkgs.lib.recursiveUpdate {
+          name = "${self.basename}-${self.version}";
+          lxqtBundled = true;
+
+          src = super.src or (pkgs.fetchurl {
+            url = if self.lxqtBundled
+              then "http://downloads.lxqt.org/lxqt/${version}/${self.basename}-${self.version}.tar.xz"
+              else "http://downloads.lxqt.org/${self.basename}/${self.version}/${self.basename}-${self.version}.tar.xz";
+            sha256 = self.sha256;
+          });
+
+          meta = with pkgs.lib; {
+            homepage = "http://www.lxqt.org";
+            license = licenses.lgpl21;
+            platforms = platforms.linux;
+            maintainers = [ maintainers.ellis ];
+          };
+        } super;
+    in self);
 
   # For compiling information, see:
   # - http://wiki.lxde.org/en/Build_LXDE-Qt_From_Source
@@ -33,10 +45,7 @@ lxqt_self = rec {
   # compiled by the build_all.sh script in the lxde-qt repository.
 
   # first the autotools packages
-  lxqt-libfm-extras = callPackage ./base/libfm-extras.nix { };
-  menu-cache = callPackage ./base/menu-cache.nix { };
   lxmenu-data = callPackage ./data/lxmenu-data.nix { };
-  lxqt-libfm = callPackage ./base/libfm.nix { };
 
   # now the cmake packages
 
@@ -53,31 +62,32 @@ lxqt_self = rec {
   lxqt-common = callPackage ./data/lxqt-common.nix { };
   lxqt-config = callPackage ./core/lxqt-config.nix { };
 
-  # requires liboobs-1
-  #lxqt-admin = callPackage ./core/lxqt-admin.nix { };
+  lxqt-admin = callPackage ./core/lxqt-admin.nix { };
 
   lxqt-openssh-askpass = callPackage ./core/lxqt-openssh-askpass.nix { };
   lxqt-panel = callPackage ./core/lxqt-panel.nix { };
-  lxqt-polkit_qt_1 = callPackage ./polkit-qt-1/default.nix { };
   lxqt-policykit = callPackage ./core/lxqt-policykit.nix { };
   lxqt-powermanagement = callPackage ./core/lxqt-powermanagement.nix { };
   lxqt-runner = callPackage ./core/lxqt-runner.nix { };
-  lxqt-pcmanfm-qt = callPackage ./core/pcmanfm-qt.nix { };
+  pcmanfm-qt = callPackage ./core/pcmanfm-qt.nix { };
   lximage-qt = callPackage ./core/lximage-qt.nix { };
 
   compton-conf = callPackage ./core/compton-conf.nix { };
-  #obconf-qt = callPackage ./core/obconf-qt.nix { };
+  obconf-qt = callPackage ./core/obconf-qt.nix { };
 
 # TODO:
 # - [x] remove -DUSE_QT_5=ON where it's not needed
 # - [x] write a script to patch CMakeLists.txt for various paths
 # - [x] need to fix Qt's translation path, so translations are stored in the correct place in /nix/store but read from /run/current-system/sw/
-# - [ ] need to do something with Qt's plugin path, see http://doc.qt.io/qt-5/deployment-plugins.html
 # - [ ] lxqt-common: figure out what to do with the xsession files
 # - [ ] test whether `-DLIB_SUFFIX` can be removed from everywhere
 # - [ ] install lxqt.desktop in `desktops` package somehow (see desktops/xfce.desktop)
 # - [ ] install lxqt.desktop from lxqt-common/xsession to $out/share/xsessions (see xfce4-session/share/xsessions/xfce.desktop)
+# - [ ] figure out how to make sure Qt sees the plugins from core/lxqt-qtplugin, and which directory should we install the plugins to?
+#   - see http://qt-project.org/doc/qt-5/deployment-plugins.html
+#   - see README in lxqt-qtplugin repository
+# - [ ] lxqt-common: I suppress the installation of .desktop session files for kdm/xdm; what should be done?
 # - [ ] add maintainers metadata
 };
 
-in lxqt_self
+in lxqtSelf

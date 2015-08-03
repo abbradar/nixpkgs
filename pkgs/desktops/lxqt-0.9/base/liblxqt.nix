@@ -1,38 +1,27 @@
-{ stdenv, fetchFromGitHub
+{ mkLxqt
 , cmake
-, qt54
+, qt
 , kwindowsystem
 , libqtxdg
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "liblxqt";
   version = "0.9.0";
-  name = "${basename}-${version}";
+  sha256 = "0ljdzqavvy82qwwwnhg2bgbshl2ns0k2lcswxlx1cfc8rcdr9w5l";
 
-  src = fetchFromGitHub {
-    owner = "lxde";
-    repo = basename;
-    rev = version;
-    sha256 = "00smn3a32gmzhhl3j884659sw0wkcm618q899633k5m1kw5dlb3y";
-  };
+  nativeBuildInputs = [ cmake qt.tools ];
 
-  buildInputs = [ stdenv cmake qt54.base qt54.tools qt54.x11extras kwindowsystem libqtxdg ];
+  patches = [ ./liblxqt.patch ];
 
-  patchPhase = ''
-    sed -i 's|DESTINATION ..TR_INSTALL_DIR.|DESTINATION share/lxqt/translations|' cmake/modules/LXQtTranslateTs.cmake
-    sed -i 's|set(LXQT_SHARE_DIR .*)|set(LXQT_SHARE_DIR "/run/current-system/sw/share/lxqt")|' CMakeLists.txt
+  propagatedBuildInputs = [ qt.base qt.x11extras kwindowsystem libqtxdg ];
+
+  postInstall = ''
+    mkdir -p $out/nix-support
+    cat <<EOF >$out/nix-support/setup-hook
+    cmakeFlags="-DLXQT_ETC_XDG_DIR=\$out/etc/xdg \$cmakeFlags"
+    EOF
   '';
 
-  preConfigure = ''
-    cmakeFlags="-DLXQT_ETC_XDG_DIR=/run/current-system/sw/etc/xdg"
-  '';
-
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "Common base library for most lxde-qt components";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "Common base library for most lxde-qt components";
 }

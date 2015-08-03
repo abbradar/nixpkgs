@@ -1,39 +1,26 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt
+, pkgconfig
 , cmake
-, qt54
-, kwindowsystem
-, libqtxdg
+, qt
 , liblxqt
 , lxqt-globalkeys
-, standardPatch
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "lxqt-runner";
   version = "0.9.0";
-  name = "${basename}-${version}";
+  sha256 = "16j3cv08l5sdlidx8p6zi1vyyfbrcxx66hfaj9wf3adjmj2lv7bx";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "de6de66013e15f149526f6eee856aeef316a3198";
-    sha256 = "f13e3d9ce4eaf89b107ce8561ff22287de8abffdf11787e89e614af44967237f";
-  };
-
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
+    pkgconfig
     cmake
-	qt54.base qt54.tools qt54.x11extras qt54.script
-	kwindowsystem
-    libqtxdg liblxqt lxqt-globalkeys
+    qt.tools
   ];
 
-  patchPhase = standardPatch;
+  buildInputs = [
+    qt.script
+    liblxqt lxqt-globalkeys
+  ];
 
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "Launch applications quickly by typing commands";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "Launch applications quickly by typing commands";
 }

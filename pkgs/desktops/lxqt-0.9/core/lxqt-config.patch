@@ -1,0 +1,10 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 56929c4..643959d 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -63,4 +63,4 @@ target_link_libraries(lxqt-config qcategorizedview)
+ 
+ install(TARGETS lxqt-config RUNTIME DESTINATION bin)
+ install(FILES ${DESKTOP_FILES} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications")
+-install(FILES lxqt-config.menu DESTINATION /etc/xdg/menus/)
++install(FILES lxqt-config.menu DESTINATION "${LXQT_ETC_XDG_DIR}/menus/")

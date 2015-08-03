@@ -1,40 +1,26 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt
+, pkgconfig
 , cmake
-, qt54
-, kwindowsystem
-, lxqt-polkit_qt_1
+, qt
+, polkit_qt5
 , liblxqt
-, libqtxdg
-, standardPatch
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "lxqt-policykit";
   version = "0.9.0";
-  name = "${basename}-${version}";
+  sha256 = "0jgm5hf2lny1frlcmhp7gaiq7lg9xrxv89az80q46pq8b5l4pvbb";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "2b0e784cf3a71bcee25cafc844ec34306eb17aaf";
-    sha256 = "47ae74e6ab5816ec4ff9d30fa17d2c6394b7808d6617c6e2ccff23f58831204c";
-  };
-
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
+    pkgconfig
     cmake
-    qt54.base qt54.tools qt54.x11extras
-    kwindowsystem
-    lxqt-polkit_qt_1
-    libqtxdg liblxqt
+    qt.tools
   ];
 
-  patchPhase = standardPatch;
+  buildInputs = [
+    polkit_qt5
+    liblxqt
+  ];
 
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "Policykit authentication agent";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "Policykit authentication agent";
 }

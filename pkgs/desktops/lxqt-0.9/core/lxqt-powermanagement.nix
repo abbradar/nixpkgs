@@ -1,40 +1,24 @@
-{ stdenv, fetchgit, pkgconfig
+{ mkLxqt
+, pkgconfig
 , cmake
-, qt54
-, kwindowsystem
-, libpthreadstubs, libXdmcp
-, libqtxdg
+, qt
 , liblxqt
-, standardPatch
 }:
 
-stdenv.mkDerivation rec {
+mkLxqt {
   basename = "lxqt-powermanagement";
   version = "0.9.0";
-  name = "${basename}-${version}";
+  sha256 = "0sq0qfqaz9pf47g2m5szpq3dqwqcjz32kiwcars7lc3nk6ddw0j6";
 
-  src = fetchgit {
-    url = "https://github.com/lxde/${basename}.git";
-    rev = "4bc9f66d12afb4bab72867c64769697aab74bfa4";
-    sha256 = "7988d1260c1863b840a6f85974d716c23dca7ca8c839478e3abfd9e2a2d9042f";
-  };
-
-  buildInputs = [
-    stdenv pkgconfig
+  nativeBuildInputs = [
+    pkgconfig
     cmake
-    qt54.base qt54.tools qt54.x11extras
-    kwindowsystem
-    libpthreadstubs libXdmcp
-    libqtxdg liblxqt
+    qt.tools
   ];
 
-  patchPhase = standardPatch;
+  buildInputs = [
+    liblxqt
+  ];
 
-  meta = {
-    homepage = "http://www.lxqt.org";
-    description = "Daemon use for power management and auto-suspend";
-    license = stdenv.lib.licenses.lgpl21;
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = [ stdenv.lib.maintainers.ellis ];
-  };
+  meta.description = "Daemon use for power management and auto-suspend";
 }
