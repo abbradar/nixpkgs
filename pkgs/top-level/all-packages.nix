@@ -8173,6 +8173,8 @@ let
 
   sword = callPackage ../development/libraries/sword { };
 
+  system-tools-backends = callPackage ../development/libraries/system-tools-backends { };
+
   szip = callPackage ../development/libraries/szip { };
 
   t1lib = callPackage ../development/libraries/t1lib { };
