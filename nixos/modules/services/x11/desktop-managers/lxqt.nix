@@ -33,7 +33,6 @@ in
     environment.systemPackages = [
       pkgs.kde5.oxygen-icons
       pkgs.hicolor_icon_theme
-      #pkgs.lxqt.lxmenu-data
       pkgs.which
       #pkgs.libfm
       #pkgs.libfm.override { extraOnly = true; }

@@ -44,11 +44,6 @@ lxqtSelf = rec {
   # packages are listed here in the same order as they are
   # compiled by the build_all.sh script in the lxde-qt repository.
 
-  # first the autotools packages
-  lxmenu-data = callPackage ./data/lxmenu-data.nix { };
-
-  # now the cmake packages
-
   libqtxdg = callPackage ./base/libqtxdg.nix { };
   liblxqt = callPackage ./base/liblxqt.nix { };
   liblxqt-mount = callPackage ./base/liblxqt-mount.nix { };
