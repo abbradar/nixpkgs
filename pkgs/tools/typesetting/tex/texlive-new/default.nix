@@ -57,7 +57,7 @@ let
 
       tetex = orig.tetex // { # 2015.08.27 as we need version with mktexlsr.pl
         # TODO: URL to fetch from
-        md5.run = "4b4c0208124dfc9c8244c24421946d36";
+        md5.run = "6bd9286308eb5045e1d8a27932d4cf69";
         md5.doc = "983f5e5b5f4e407760b4ec176cf6a58f";
         version = "3.0"; # it's the same
         postUnpack = "cd $out && patch -p2 < ${./texlinks.patch} || true";
