@@ -1,6 +1,7 @@
 { lib, buildFHSUserEnv
 , withJava   ? false
 , withPrimus ? false
+, workaroundLibstdc ? false
 }:
 
 buildFHSUserEnv {
@@ -50,6 +51,8 @@ buildFHSUserEnv {
 
   profile = ''
     export STEAM_RUNTIME=/steamrt
+  '' + lib.optionalString workaroundLibstdc ''
+    export LD_PRELOAD='/steamrt/amd64/lib/libstdc++.so.6:/steamrt/i386/lib/libstdc++.so.6'
   '';
 
   runScript = "steam";
