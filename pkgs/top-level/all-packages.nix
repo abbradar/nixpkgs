@@ -13447,15 +13447,17 @@ let
       else null;
   };
 
-  bumblebee = callPackage ../tools/X11/bumblebee {
-    nvidia_x11 = linuxPackages.nvidia_x11;
-    nvidia_x11_i686 = if system == "x86_64-linux"
-      then pkgsi686Linux.linuxPackages.nvidia_x11.override { libsOnly = true; }
-      else null;
-    primusLib_i686 = if system == "x86_64-linux"
-      then pkgsi686Linux.primusLib
-      else null;
-  };
+  bumblebee = callPackageWithDeprecated
+    { extraDeviceOptions = "Use 'extraNvidiaDeviceOptions' or 'extraNouveauDeviceOptions'"; }
+    ../tools/X11/bumblebee
+    { nvidia_x11 = linuxPackages.nvidia_x11;
+      nvidia_x11_i686 = if system == "x86_64-linux"
+        then pkgsi686Linux.linuxPackages.nvidia_x11.override { libsOnly = true; }
+        else null;
+      primusLib_i686 = if system == "x86_64-linux"
+        then pkgsi686Linux.primusLib
+        else null;
+    };
 
   vkeybd = callPackage ../applications/audio/vkeybd {};
 
