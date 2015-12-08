@@ -51,10 +51,13 @@ rec {
        else { }));
 
 
-  makeOverridable = f: origArgs:
+  makeOverridableWithDeprecated = deprecated: f: origArgs:
     let
-      ff = f origArgs;
-      overrideWith = newArgs: origArgs // (if builtins.isFunction newArgs then newArgs origArgs else newArgs);
+      checkDeprecated = args:
+        let old = builtins.intersectAttrs args deprecated;
+        in if old == {} then args else throw "Deprecated arguments to the package: ${builtins.toJSON old}";
+      ff = f (checkDeprecated origArgs);
+      overrideWith = newArgs: origArgs // checkDeprecated (if builtins.isFunction newArgs then newArgs origArgs else newArgs);
     in
       if builtins.isAttrs ff then (ff //
         { override = newArgs: makeOverridable f (overrideWith newArgs);
@@ -67,6 +70,9 @@ rec {
           overrideDerivation = throw "overrideDerivation not yet supported for functors";
         }
       else ff;
+
+
+  makeOverridable = makeOverridableWithDeprecated {};
 
 
   /* Call the package function in the file `fn' with the required
@@ -90,12 +96,13 @@ rec {
         enableX11 = true;
       };
   */
-  callPackageWith = autoArgs: fn: args:
+  callPackageWithDeprecated = deprecated: autoArgs: fn: args:
     let
       f = if builtins.isFunction fn then fn else import fn;
       auto = builtins.intersectAttrs (builtins.functionArgs f) autoArgs;
-    in makeOverridable f (auto // args);
+    in makeOverridableWithDeprecated deprecated f (auto // args);
 
+  callPackageWith = callPackageWithDeprecated {};
 
   /* Like callPackage, but for a function that returns an attribute
      set of derivations. The override function is added to the

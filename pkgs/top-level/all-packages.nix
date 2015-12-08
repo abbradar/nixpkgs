@@ -140,11 +140,15 @@ let
   # can be obtained from `pkgs' or `pkgs.xorg' (i.e. `defaultScope').
   # Use `newScope' for sets of packages in `pkgs' (see e.g. `gnome'
   # below).
-  callPackage = newScope {};
+  callPackageWithDeprecated = deprecated: newScopeWithDeprecated deprecated {};
+
+  callPackage = callPackageWithDeprecated {};
 
   callPackages = lib.callPackagesWith defaultScope;
 
-  newScope = extra: lib.callPackageWith (defaultScope // extra);
+  newScopeWithDeprecated = deprecated: extra: lib.callPackageWithDeprecated deprecated (defaultScope // extra);
+
+  newScope = newScopeWithDeprecated {};
 
   # Easily override this package set.
   # Warning: this function is very expensive and must not be used
