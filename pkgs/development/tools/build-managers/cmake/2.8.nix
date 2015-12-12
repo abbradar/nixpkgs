@@ -30,6 +30,11 @@ stdenv.mkDerivation rec {
       name = "FindFreetype-2.5.patch";
       url = "http://www.cmake.org/Bug/file_download.php?file_id=4660&type=bug";
       sha256 = "136z63ff83hnwd247cq4m8m8164pklzyl5i2csf5h6wd8p01pdkj";
+    })
+    (fetchpatch {
+      name = "FindOpenSSL-1.0.2.patch";
+      url = "https://cmake.org/gitweb?p=cmake.git;a=patch;h=c5d9a8283cfac15b4a5a07f18d5eb10c1f388505";
+      sha256 = "1n6i65f749gjbml6lc4prbssb91rf2qvq5dadn5dld4x0pzr91w5";
     })] ++
     # Don't search in non-Nix locations such as /usr, but do search in
     # Nixpkgs' Glibc. 
