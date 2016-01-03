@@ -9198,7 +9198,9 @@ let
 
   dovecot22 = callPackage ../servers/mail/dovecot/2.2.x.nix { };
 
-  dovecot_pigeonhole = callPackage ../servers/mail/dovecot-pigeonhole { };
+  dovecot_pigeonhole = callPackage ../servers/mail/dovecot/plugins/pigeonhole {
+    dovecot = dovecot22;
+  };
 
   etcd = goPackages.etcd.bin // { outputs = [ "bin" ]; };
 
