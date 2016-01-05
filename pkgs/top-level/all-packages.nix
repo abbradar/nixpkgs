@@ -9202,6 +9202,8 @@ let
     dovecot = dovecot22;
   };
 
+  dovecot_antispam = callPackage ../servers/mail/dovecot/plugins/antispam { };
+
   etcd = goPackages.etcd.bin // { outputs = [ "bin" ]; };
 
   ejabberd = callPackage ../servers/xmpp/ejabberd {
