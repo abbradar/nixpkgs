@@ -188,6 +188,7 @@
   ./services/mail/mlmmj.nix
   ./services/mail/opensmtpd.nix
   ./services/mail/postfix.nix
+  ./services/mail/postsrsd.nix
   ./services/mail/spamassassin.nix
   ./services/misc/apache-kafka.nix
   ./services/misc/autofs.nix
