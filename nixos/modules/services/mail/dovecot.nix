@@ -265,7 +265,7 @@ in
     environment.systemPackages = [ dovecotPkg ];
 
     assertions = [
-      { assertion = intersectLists cfg.protocols [ "pop3" "imap" ] != []
+      { assertion = intersectLists cfg.protocols [ "pop3" "imap" ] != [];
         message = "dovecot needs at least one of the IMAP or POP3 listeners enabled";
       }
       { assertion = isNull cfg.sslServerCert == isNull cfg.sslServerKey
