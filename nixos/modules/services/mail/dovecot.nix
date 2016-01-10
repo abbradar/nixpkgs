@@ -183,6 +183,7 @@ in
       type = types.bool;
       default = true;
       description = "Whether to create a own Dovecot PAM service and configure PAM user logins.";
+    };
 
     sieveScripts = mkOption {
       type = types.attrsOf types.path;
