@@ -25,6 +25,9 @@ let
       disable_plaintext_auth = yes
     '')
 
+    (optionalString (cfg.mailUser != null) "mail_uid = ${cfg.mailUser}")
+    (optionalString (cfg.mailGroup != null) "mail_gid = ${cfg.mailGroup}")
+
     ''
       default_internal_user = ${cfg.user}
 
@@ -132,6 +135,18 @@ in
       description = ''
         Location that dovecot will use for mail folders. Dovecot mail_location option.
       '';
+    };
+
+    mailUser = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Default user to store mail for virtual users.";
+    };
+
+    mailGroup = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Default group to store mail for virtual users.";
     };
 
     modules = mkOption {
@@ -243,7 +258,7 @@ in
           fi
            ${pkgs.dovecot_pigeonhole}/bin/sievec '/var/lib/dovecot/sieve/${to}'
         '') cfg.sieveScripts)}
-        chown -R '${cfg.user}:${cfg.group}' /var/lib/dovecot/sieve
+        chown -R '${cfg.mailUser}:${cfg.mailGroup}' /var/lib/dovecot/sieve
       '';
     };
 
