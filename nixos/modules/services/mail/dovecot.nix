@@ -200,6 +200,7 @@ in
       };
 
     environment.etc."dovecot/modules".source = modulesDir;
+    environment.etc."dovecot/dovecot.conf".source = cfg.configFile;
 
     systemd.services.dovecot2 = {
       description = "Dovecot IMAP/POP3 server";
@@ -207,10 +208,11 @@ in
       after = [ "keys.target" "network.target" ];
       wants = [ "keys.target" ];
       wantedBy = [ "multi-user.target" ];
+      restartTriggers = [ cfg.configFile ];
 
       serviceConfig = {
-        ExecStart = "${dovecotPkg}/sbin/dovecot -F -c ${cfg.configFile}";
-        ExecReload = "${dovecotPkg}/sbin/doveadm reload -c ${cfg.configFile}";
+        ExecStart = "${dovecotPkg}/sbin/dovecot -F";
+        ExecReload = "${dovecotPkg}/sbin/doveadm reload";
         Restart = "on-failure";
         RestartSec = "1s";
         StartLimitInterval = "1min";
