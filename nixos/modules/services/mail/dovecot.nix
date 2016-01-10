@@ -199,17 +199,14 @@ in
         gid = config.ids.gids.dovecot2;
       };
 
+    environment.etc."dovecot/modules".source = modulesDir;
+
     systemd.services.dovecot2 = {
       description = "Dovecot IMAP/POP3 server";
 
       after = [ "keys.target" "network.target" ];
       wants = [ "keys.target" ];
       wantedBy = [ "multi-user.target" ];
-
-      preStart = ''
-        rm -f "${stateDir}/modules"
-        ln -s "${modulesDir}" "${stateDir}/modules"
-      '';
 
       serviceConfig = {
         ExecStart = "${dovecotPkg}/sbin/dovecot -F -c ${cfg.configFile}";
