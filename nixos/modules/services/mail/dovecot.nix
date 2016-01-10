@@ -25,11 +25,10 @@ let
       disable_plaintext_auth = yes
     '')
 
-    (optionalString (cfg.mailUser != null) "mail_uid = ${cfg.mailUser}")
-    (optionalString (cfg.mailGroup != null) "mail_gid = ${cfg.mailGroup}")
-
     ''
       default_internal_user = ${cfg.user}
+      ${optionalString (cfg.mailUser != null) "mail_uid = ${cfg.mailUser}"}
+      ${optionalString (cfg.mailGroup != null) "mail_gid = ${cfg.mailGroup}"}
 
       mail_location = ${cfg.mailLocation}
 
