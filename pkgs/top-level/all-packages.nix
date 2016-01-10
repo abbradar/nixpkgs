@@ -9204,6 +9204,10 @@ let
 
   dovecot_antispam = callPackage ../servers/mail/dovecot/plugins/antispam { };
 
+  dspam = callPackage ../servers/mail/dspam {
+    inherit (perlPackages) NetSMTP;
+  };
+
   etcd = goPackages.etcd.bin // { outputs = [ "bin" ]; };
 
   ejabberd = callPackage ../servers/xmpp/ejabberd { };
