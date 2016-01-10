@@ -423,6 +423,11 @@ in
           };
 
           preStart = ''
+            # Backwards compatibility
+            if [ ! -d /var/lib/postfix && -d /var/postfix ]; then
+              mkdir -p /var/lib
+              ln -s /var/postfix /var/lib/postfix
+            fi
             mkdir -p /var/lib/postfix/data /var/lib/postfix/queue/{private,pid,public,maildrop}
 
             chown -R ${user}:${group} /var/lib/postfix
