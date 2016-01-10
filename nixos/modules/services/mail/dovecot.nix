@@ -12,7 +12,7 @@ let
   dovecotConf = concatStrings [
     ''
       base_dir = ${baseDir}
-      protocols = ${cfg.protocols}
+      protocols = ${concatStringsSep " " cfg.protocols}
     ''
 
     (if isNull cfg.sslServerCert then ''
