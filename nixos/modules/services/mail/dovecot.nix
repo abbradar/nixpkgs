@@ -152,7 +152,7 @@ in
     modules = mkOption {
       type = types.listOf types.package;
       default = [];
-      literalExample = "[ pkgs.dovecot_pigeonhole ]";
+      example = literalExample "[ pkgs.dovecot_pigeonhole ]";
       description = ''
         Symlinks the contents of lib/dovecot of every given package into
         /etc/dovecot/modules. This will make the given modules available
