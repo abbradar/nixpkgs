@@ -213,7 +213,7 @@ in
         description = "Dovecot user for untrusted logins";
         group = cfg.group;
       }
-    ] ++ optional (cfg.user == "dovecot2" )
+    ] ++ optional (cfg.user == "dovecot2")
          { name = "dovecot2";
            uid = config.ids.uids.dovecot2;
            description = "Dovecot user";
