@@ -56,7 +56,7 @@ let
 
     (optionalString (cfg.sieveScripts != {}) ''
       plugin {
-        ${concatStringsSep "\n" (mapAttrsToList (to: from: "sieve_${to} = /var/lib/dovecot/sieve/${to}") cfg.sieveScripts)}
+        ${concatStringsSep "\n" (mapAttrsToList (to: from: "sieve_${to} = ${stateDir}/sieve/${to}") cfg.sieveScripts)}
       }
     '')
 
@@ -247,19 +247,19 @@ in
       };
 
       preStart = ''
-        rm -rf /var/lib/dovecot/sieve
+        rm -rf ${stateDir}/sieve
       '' + optionalString (cfg.sieveScripts != {}) ''
-        mkdir -p /var/lib/dovecot/sieve
+        mkdir -p ${stateDir}/sieve
         ${concatStringsSep "\n" (mapAttrsToList (to: from: ''
           if [ -d '${from}' ]; then
-            mkdir '/var/lib/dovecot/sieve/${to}'
-            cp ${from}/*.sieve '/var/lib/dovecot/sieve/${to}'
+            mkdir '${stateDir}/sieve/${to}'
+            cp ${from}/*.sieve '${stateDir}/sieve/${to}'
           else
-            cp '${from}' '/var/lib/dovecot/sieve/${to}'
+            cp '${from}' '${stateDir}/sieve/${to}'
           fi
-           ${pkgs.dovecot_pigeonhole}/bin/sievec '/var/lib/dovecot/sieve/${to}'
+           ${pkgs.dovecot_pigeonhole}/bin/sievec '${stateDir}/sieve/${to}'
         '') cfg.sieveScripts)}
-        chown -R '${cfg.mailUser}:${cfg.mailGroup}' /var/lib/dovecot/sieve
+        chown -R '${cfg.mailUser}:${cfg.mailGroup}' ${stateDir}/sieve
       '';
     };
 
