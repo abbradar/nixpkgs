@@ -424,7 +424,7 @@ in
 
           preStart = ''
             # Backwards compatibility
-            if [ ! -d /var/lib/postfix && -d /var/postfix ]; then
+            if [ ! -d /var/lib/postfix ] && [ -d /var/postfix ]; then
               mkdir -p /var/lib
               ln -s /var/postfix /var/lib/postfix
             fi
