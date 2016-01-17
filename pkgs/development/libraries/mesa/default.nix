@@ -53,11 +53,6 @@ stdenv.mkDerivation {
         inherit udev;
       });
 
-  postPatch = ''
-    substituteInPlace src/egl/main/egldriver.c \
-      --replace _EGL_DRIVER_SEARCH_DIR '"${driverLink}"'
-  '';
-
   outputs = ["out" "drivers" "osmesa"];
 
   configureFlags = [
