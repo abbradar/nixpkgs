@@ -4,6 +4,8 @@
 , libvdpau, libelf, libva
 , grsecEnabled
 , enableTextureFloats ? false # Texture floats are patented, see docs/patents.txt
+  # this is the default search path for DRI drivers
+, driverLink ? "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32" + "/lib"
 }:
 
 if ! stdenv.lib.lists.elem stdenv.system stdenv.lib.platforms.mesaPlatforms then
@@ -23,8 +25,6 @@ else
 
 let
   version = "11.0.8";
-  # this is the default search path for DRI drivers
-  driverLink = "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32";
 in
 with { inherit (stdenv.lib) optional optionals optionalString; };
 
@@ -59,7 +59,7 @@ stdenv.mkDerivation {
     "--sysconfdir=/etc"
     "--localstatedir=/var"
     "--with-dri-driverdir=$(drivers)/lib/dri"
-    "--with-dri-searchpath=${driverLink}/lib/dri"
+    "--with-dri-searchpath=${driverLink}/dri"
 
     "--enable-gles1"
     "--enable-gles2"
