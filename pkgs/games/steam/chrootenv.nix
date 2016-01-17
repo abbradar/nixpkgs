@@ -1,6 +1,7 @@
 { lib, buildFHSUserEnv, steam
 , withJava   ? false
 , withPrimus ? false
+, withMesa  ? false
 }:
 
 buildFHSUserEnv {
@@ -39,7 +40,17 @@ buildFHSUserEnv {
       libdrm
 
       steamPackages.steam-runtime-wrapped
-    ];
+    ]
+    ++ lib.optionals withMesa (let
+         oldStdenv = pkgs.overrideCC pkgs.stdenv pkgs.gcc48;
+         mesa_noglu = pkgs.mesa_noglu.override {
+           stdenv = oldStdenv;
+           driverLink = "/usr/lib${if oldStdenv.isi686 then "32" else "64"}";
+         };
+       in [
+         mesa_noglu mesa_noglu.drivers
+       ])
+    ;
 
   extraBuildCommands = ''
     mkdir -p steamrt
