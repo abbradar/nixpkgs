@@ -68,6 +68,7 @@ buildFHSUserEnv {
 
   profile = ''
     export STEAM_RUNTIME=/steamrt
+    ${lib.optionalString withMesa "export LD_LIBRARY_PATH="}
   '';
 
   runScript = "steam";
