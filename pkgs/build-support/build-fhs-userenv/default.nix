@@ -16,7 +16,7 @@ let
     mkdir -m 1777 /tmp
 
     # Expose sockets in /tmp
-    for i in /host-tmp/.*-unix; do
+    for i in /host-tmp/.*-unix /host-tmp/pulse-*; do
       ln -s "$i" "/tmp/$(basename "$i")"
     done
 
