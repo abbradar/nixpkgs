@@ -3915,6 +3915,19 @@ let
       }))
     else throw "Multilib gcc not supported on ‘${system}’";
 
+  gcc48_multi =
+    if system == "x86_64-linux" then lowPrio (
+      let
+        extraBuildCommands = ''
+          echo "dontMoveLib64=1" >> $out/nix-support/setup-hook
+        '';
+      in wrapCCWith (callPackage ../build-support/cc-wrapper) glibc_multi extraBuildCommands (gcc48.cc.override {
+        stdenv = overrideCC stdenv (wrapCCWith (callPackage ../build-support/cc-wrapper) glibc_multi "" gcc48.cc);
+        profiledCompiler = false;
+        enableMultilib = true;
+      }))
+    else throw "Multilib gcc not supported on ‘${system}’";
+
   gcc_debug = lowPrio (wrapCC (gcc.cc.override {
     stripped = false;
   }));

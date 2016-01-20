@@ -43,7 +43,7 @@ let
   # base packages of the chroot
   # these match the host's architecture, gcc/glibc_multi are used for multilib
   # builds.
-  chosenGcc = if isMultiBuild then nixpkgs.gcc_multi else nixpkgs.gcc;
+  chosenGcc = if isMultiBuild then nixpkgs.gcc48_multi else nixpkgs.gcc48;
   basePkgs = with nixpkgs;
     [ (if isMultiBuild then glibc_multi else glibc)
       chosenGcc

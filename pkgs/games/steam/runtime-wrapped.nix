@@ -82,6 +82,7 @@ let
   ] ++ lib.optional (!newStdcpp) gcc48.cc;
 
   overridePkgs = with pkgs; [
+    gcc48.cc
     libpulseaudio
     alsaLib
     openalSoft

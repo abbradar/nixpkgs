@@ -20,6 +20,8 @@ buildFHSUserEnv {
       which
       # Needed by gdialog, including in the steam-runtime
       perl
+
+      glxinfo
     ]
     ++ lib.optional withJava   jdk
     ++ lib.optional withPrimus primus
@@ -68,8 +70,8 @@ buildFHSUserEnv {
 
   profile = ''
     export STEAM_RUNTIME=/steamrt
-    ${lib.optionalString withMesa "export LD_LIBRARY_PATH="}
+    ${lib.optionalString withMesa "unset LD_LIBRARY_PATH"}
   '';
 
-  runScript = "steam";
+  #runScript = "steam";
 }
