@@ -1,0 +1,45 @@
+diff --git a/UM/Application.py b/UM/Application.py
+index 307ddbc..d66b98c 100644
+--- a/UM/Application.py
++++ b/UM/Application.py
+@@ -43,10 +43,10 @@ class Application(SignalEmitter):
+         Signal._app = self
+         Resources.ApplicationIdentifier = name
+ 
+-        Resources.addResourcePath(os.path.dirname(sys.executable))
++        Resources.addResourcePath(os.path.join("@out@", "share", "uranium"))
+         Resources.addResourcePath(os.path.join(Application.getInstallPrefix(), "share", "uranium"))
+-        Resources.addResourcePath(os.path.join(Application.getInstallPrefix(), "Resources", "uranium"))
+-        Resources.addResourcePath(os.path.join(Application.getInstallPrefix(), "Resources", self.getApplicationName()))
++        Resources.addResourcePath(os.path.join(Application.getInstallPrefix(), "share", self.getApplicationName()))
++        Resources.addResourcePath(os.path.dirname(sys.executable))
+         if not hasattr(sys, "frozen"):
+             Resources.addResourcePath(os.path.join(os.path.abspath(os.path.dirname(__file__)), ".."))
+ 
+@@ -84,10 +84,10 @@ class Application(SignalEmitter):
+ 
+         self._plugin_registry = PluginRegistry.getInstance()
+ 
+-        self._plugin_registry.addPluginLocation(os.path.join(Application.getInstallPrefix(), "lib", "uranium"))
++        self._plugin_registry.addPluginLocation(os.path.join("@out@", "lib", "uranium", "plugins"))
++        self._plugin_registry.addPluginLocation(os.path.join(Application.getInstallPrefix(), "lib", "uranium", "plugins"))
++        self._plugin_registry.addPluginLocation(os.path.join(Application.getInstallPrefix(), "lib", self.getApplicationName(), "plugins"))
+         self._plugin_registry.addPluginLocation(os.path.join(os.path.dirname(sys.executable), "plugins"))
+-        self._plugin_registry.addPluginLocation(os.path.join(Application.getInstallPrefix(), "Resources", "uranium", "plugins"))
+-        self._plugin_registry.addPluginLocation(os.path.join(Application.getInstallPrefix(), "Resources", self.getApplicationName(), "plugins"))
+         # Locally installed plugins
+         self._plugin_registry.addPluginLocation(os.path.join(Resources.getStoragePath(Resources.ResourcesLocation), "plugins"))
+         if not hasattr(sys, "frozen"):
+diff --git a/UM/Qt/QtApplication.py b/UM/Qt/QtApplication.py
+index d55863c..059ff65 100644
+--- a/UM/Qt/QtApplication.py
++++ b/UM/Qt/QtApplication.py
+@@ -118,7 +118,7 @@ class QtApplication(QApplication, Application, SignalEmitter):
+         self.engineCreatedSignal.emit()
+         
+         self._engine.addImportPath(os.path.join(os.path.dirname(sys.executable), "qml"))
+-        self._engine.addImportPath(os.path.join(Application.getInstallPrefix(), "Resources", "qml"))
++        self._engine.addImportPath(os.path.join(Application.getInstallPrefix(), "share", self.getApplicationName(), "resources", "qml"))
+         if not hasattr(sys, "frozen"):
+             self._engine.addImportPath(os.path.join(os.path.dirname(__file__), "qml"))
+ 

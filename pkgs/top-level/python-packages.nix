@@ -4901,6 +4901,10 @@ in modules // {
     };
   };
 
+  uranium = callPackage ../development/python-modules/uranium {
+    pyqt5 = self.pyqt54;
+  };
+
   urllib3 = buildPythonPackage rec {
     name = "urllib3-1.12";
 
