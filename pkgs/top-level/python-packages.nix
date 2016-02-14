@@ -6067,7 +6067,6 @@ in modules // {
     };
   };
 
-
   libthumbor = buildPythonPackage rec {
     name = "libthumbor-${version}";
     version = "1.2.0";
@@ -22501,6 +22500,7 @@ in modules // {
     doCheck = false;
   };
 
+  libarcus = (pkgs.libarcus.override { inherit python; }).python;
 
   libarchive = buildPythonPackage rec {
     version = "3.1.2-1";

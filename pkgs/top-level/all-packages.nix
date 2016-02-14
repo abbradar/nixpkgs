@@ -7085,6 +7085,11 @@ let
   libappindicator-gtk2 = callPackage ../development/libraries/libappindicator { gtkVersion = "2"; };
   libappindicator-gtk3 = callPackage ../development/libraries/libappindicator { gtkVersion = "3"; };
 
+  libarcus = callPackage ../development/libraries/libarcus {
+    protobuf = protobuf3_0;
+    python = python3;
+  };
+
   libarchive = callPackage ../development/libraries/libarchive { };
 
   libasr = callPackage ../development/libraries/libasr { };
