@@ -1,0 +1,18 @@
+diff --git a/plugins/CuraEngineBackend/CuraEngineBackend.py b/plugins/CuraEngineBackend/CuraEngineBackend.py
+index d5e948d..c7a44f6 100644
+--- a/plugins/CuraEngineBackend/CuraEngineBackend.py
++++ b/plugins/CuraEngineBackend/CuraEngineBackend.py
+@@ -26,12 +26,7 @@ class CuraEngineBackend(Backend):
+         super().__init__()
+ 
+         # Find out where the engine is located, and how it is called. This depends on how Cura is packaged and which OS we are running on.
+-        default_engine_location = os.path.join(Application.getInstallPrefix(), "bin", "CuraEngine")
+-        if hasattr(sys, "frozen"):
+-            default_engine_location = os.path.join(os.path.dirname(os.path.abspath(sys.executable)), "CuraEngine")
+-        if sys.platform == "win32":
+-            default_engine_location += ".exe"
+-        default_engine_location = os.path.abspath(default_engine_location)
++        default_engine_location = "@curaengine@/bin/CuraEngine"
+         Preferences.getInstance().addPreference("backend/location", default_engine_location)
+ 
+         self._scene = Application.getInstance().getController().getScene()

@@ -13365,7 +13365,9 @@ let
 
   curaengine = callPackage ../applications/misc/curaengine { };
 
-  cura = callPackage ../applications/misc/cura { };
+  cura = callPackage ../applications/misc/cura {
+    pythonPackages = python3Packages;
+  };
 
   curaLulzbot = callPackage ../applications/misc/cura/lulzbot.nix { };
 
