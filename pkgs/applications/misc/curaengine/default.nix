@@ -1,19 +1,21 @@
-{ stdenv, fetchurl }:
-let
-  version = "15.04";
-in
-stdenv.mkDerivation {
-  name = "curaengine-${version}";
+{ stdenv, fetchFromGitHub, cmake, libarcus }:
 
-  src = fetchurl {
-    url = "https://github.com/Ultimaker/CuraEngine/archive/${version}.tar.gz";
-    sha256 = "0rgrsyi7951fsv3lzprlzrg55jf6pbdjfql85dylwmg9nc4y8xym";
+stdenv.mkDerivation rec {
+  name = "curaengine-${version}";
+  version = "15.06.03";
+
+  src = fetchFromGitHub {
+    owner = "Ultimaker";
+    repo = "CuraEngine";
+    rev = version;
+    sha256 = "1jr7gri3rmk3xdcqhs7nwhh8r0vynjbcvjkc9pnhfd1qwidkpy4c";
   };
 
-  installPhase = ''
-    mkdir -p $out/bin
-    cp build/CuraEngine $out/bin/
-  '';
+  nativeBuildInputs = [ cmake ];
+
+  buildInputs = [ libarcus ];
+
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Engine for processing 3D models into 3D printing instructions";
