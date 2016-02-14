@@ -15655,6 +15655,8 @@ let
 
   lkproof = callPackage ../tools/typesetting/tex/lkproof { };
 
+  m3d-linux = callPackage ../misc/drivers/m3d-linux { };
+
   mysqlWorkbench = newScope gnome ../applications/misc/mysql-workbench {
     lua = lua5_1;
     libctemplate = libctemplate_2_2;
