@@ -15350,43 +15350,50 @@ in modules // {
   };
 
   protobuf = self.protobuf2_6;
+  protobuf3_0 = self.protobufBuild pkgs.protobuf3_0;
   protobuf2_6 = self.protobufBuild pkgs.protobuf2_6;
   protobuf2_5 = self.protobufBuild pkgs.protobuf2_5;
-  protobufBuild = protobuf: buildPythonPackage rec {
-    inherit (protobuf) name src;
-    disabled = isPy3k || isPyPy;
+  protobufBuild = protobuf:
+    let
+      atLeast3 = versionAtLeast protobuf.version "3.0.0";
+      atLeast26 = versionAtLeast protobuf.version "2.6.0";
+      cppImpl = atLeast26 && !isPy3k;
+    in buildPythonPackage rec {
+      inherit (protobuf) name src;
+      disabled = (!atLeast3 && isPy3k) || isPyPy;
 
-    propagatedBuildInputs = with self; [ protobuf google_apputils ];
+      buildInputs = [ protobuf ];
 
-    prePatch = ''
-      while [ ! -d python ]; do
-        cd *
-      done
-      cd python
-    '';
+      propagatedBuildInputs = optional (!atLeast3) self.google_apputils
+                              ++ optional atLeast3 self.six;
 
-    preConfigure = optionalString (versionAtLeast protobuf.version "2.6.0") ''
-      PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp
-      PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION_VERSION=2
-    '';
+      prePatch = ''
+        while [ ! -d python ]; do
+          cd *
+        done
+        cd python
+      '';
 
-    checkPhase = if versionAtLeast protobuf.version "2.6.0" then ''
-      ${python.executable} setup.py google_test --cpp_implementation
-    '' else ''
-      ${python.executable} setup.py test
-    '';
+      preConfigure = optionalString cppImpl ''
+        PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp
+        PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION_VERSION=2
+      '';
 
-    installFlags = optional (versionAtLeast protobuf.version "2.6.0") "--cpp_implementation";
+      checkPhase = if cppImpl then ''
+        ${python.executable} setup.py test --cpp_implementation
+      '' else ''
+        ${python.executable} setup.py test
+      '';
 
-    doCheck = true;
+      installFlags = optional cppImpl "--cpp_implementation";
 
-    meta = {
-      description = "Protocol Buffers are Google's data interchange format";
-      homepage = http://code.google.com/p/protobuf/;
+      meta = {
+        description = "Protocol Buffers are Google's data interchange format";
+        homepage = http://code.google.com/p/protobuf/;
+      };
+
+      passthru.protobuf = protobuf;
     };
-
-    passthru.protobuf = protobuf;
-  };
 
 
   psutil = buildPythonPackage rec {
