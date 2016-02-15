@@ -167,6 +167,12 @@ in modules // {
     qt5 = pkgs.qt55;
   };
 
+  pyqt54 = callPackage ../development/python-modules/pyqt/5.4.nix {
+    sip = self.sip_4_16;
+    pythonDBus = self.dbus;
+    qt5 = pkgs.qt54;
+  };
+
   pyside = callPackage ../development/python-modules/pyside { };
 
   pysideApiextractor = callPackage ../development/python-modules/pyside/apiextractor.nix { };
