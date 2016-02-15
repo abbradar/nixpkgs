@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, python, pkgconfig, qtbase, qtsvg, qtwebkit, sip, pythonDBus
+{ stdenv, fetchurl, python, pkgconfig, qt5, sip, pythonDBus
 , lndir, makeWrapper }:
 
 let
@@ -21,8 +21,7 @@ in stdenv.mkDerivation {
 
   buildInputs = [
     python pkgconfig makeWrapper lndir
-    qtbase qtsvg qtwebkit
-  ];
+  ] ++ (with qt5; [ qtbase qtsvg qtwebkit ]);
 
   propagatedBuildInputs = [ sip ];
 
@@ -51,6 +50,8 @@ in stdenv.mkDerivation {
       wrapProgram $i --prefix PYTHONPATH : "$PYTHONPATH"
     done
   '';
+
+  passthru.qt5 = qt5;
 
   enableParallelBuilding = true;
 }
