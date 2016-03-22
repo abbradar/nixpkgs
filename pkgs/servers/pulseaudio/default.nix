@@ -3,6 +3,7 @@
 , xorg, libcap, alsaLib, glib
 , avahi, libjack2, libasyncns, lirc, dbus
 , sbc, bluez5, udev, openssl, fftwFloat
+, python3Packages
 , speexdsp, systemd, webrtc-audio-processing, gconf ? null
 
 # Database selection
@@ -43,10 +44,13 @@ stdenv.mkDerivation rec {
 
   patches = [ ./caps-fix.patch ];
 
-  nativeBuildInputs = [ pkgconfig intltool autoreconfHook ];
+  nativeBuildInputs = [ pkgconfig intltool autoreconfHook ]
+    ++ lib.optional (!libOnly) python3Packages.wrapPython;
 
   propagatedBuildInputs =
     lib.optionals stdenv.isLinux [ libcap ];
+
+  pythonPath = lib.optionals (!libOnly) [ python3Packages.pyqt4 python3Packages.dbus ];
 
   buildInputs =
     [ json_c libsndfile speexdsp fftwFloat ]
@@ -61,7 +65,7 @@ stdenv.mkDerivation rec {
       ++ lib.optional gconfSupport gconf
       ++ lib.optionals bluetoothSupport [ bluez5 sbc ]
       ++ lib.optional remoteControlSupport lirc
-      ++ lib.optional zeroconfSupport  avahi
+      ++ lib.optional zeroconfSupport avahi
     );
 
   preConfigure = ''
@@ -111,6 +115,8 @@ stdenv.mkDerivation rec {
   postInstall = lib.optionalString libOnly ''
     rm -rf $out/{bin,share,etc,lib/{pulse-*,systemd}}
     sed 's|-lltdl|-L${libtool}/lib -lltdl|' -i $out/lib/pulseaudio/libpulsecore-${version}.la
+  '' + lib.optionalString (!libOnly) ''
+    wrapPythonPrograms
   '';
 
   meta = {
