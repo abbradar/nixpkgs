@@ -6,7 +6,9 @@
 , libfakeXinerama }:
 
 buildPythonApplication rec {
-  name = "xpra-0.16.2";
+  name = "xpra-${version}";
+  version = "0.16.2";
+
   namePrefix = "";
   src = fetchurl {
     url = "http://xpra.org/src/${name}.tar.xz";
@@ -24,47 +26,39 @@ buildPythonApplication rec {
     pango cairo gdk_pixbuf atk gtk glib
 
     ffmpeg libvpx x264 libwebp
-
-    makeWrapper
   ];
 
-  propagatedBuildInputs = with pythonPackages; [
-    pillow pygtk pygobject
+  pythonPath = with pythonPackages; [
+    pillow pygtk pygobject rencode
   ];
 
-  preBuild = ''
-    export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE $(pkg-config --cflags gtk+-2.0) $(pkg-config --cflags pygtk-2.0) $(pkg-config --cflags xtst)"
+  postPatch = ''
+    sed -i 's,"install","bdist_wheel",g' setup.py
+    sed -i "s,/etc/xpra/xorg.conf,$out/etc/xpra/xorg.conf,g" xpra/scripts/config.py
   '';
-  setupPyBuildFlags = ["--with-Xdummy" "--without-strict"];
 
-  preInstall = ''
-    # see https://bitbucket.org/pypa/setuptools/issue/130/install_data-doesnt-respect-prefix
-    ${python}/bin/${python.executable} setup.py install_data --install-dir=$out --root=$out
-    sed -i '/ = data_files/d' setup.py
+  setupPyBuildFlags = [ "--with-Xdummy" "--without-strict" ];
+
+  makeWrapperArgs = ''
+    --set XKB_BINDIR "${xkbcomp}/bin" \
+    --set FONTCONFIG_FILE "${fontsConf}" \
+    --prefix LD_LIBRARY_PATH : ${libfakeXinerama}/lib \
+    --prefix PATH : ${stdenv.lib.makeBinPath [ getopt xorgserver xauth which utillinux ]}
   '';
 
   postInstall = ''
-    wrapProgram $out/bin/xpra \
-      --set XKB_BINDIR "${xkbcomp}/bin" \
-      --set FONTCONFIG_FILE "${fontsConf}" \
-      --prefix LD_LIBRARY_PATH : ${libfakeXinerama}/lib \
-      --prefix PATH : ${getopt}/bin:${xorgserver}/bin:${xauth}/bin:${which}/bin:${utillinux}/bin
+    cp -r $out/${python.sitePackages}/${python}/* $out
+    rm -rf $out/${python.sitePackages}/$(echo "${python}" | cut -d "/" -f2)
+    sed -i "s,build/[^ ]*,$out/etc/xpra/xorg.conf,g" $out/etc/xpra/xpra.conf
   '';
 
-  preCheck = "exit 0";
+  doCheck = false;
 
-  #TODO: replace postInstall with postFixup to avoid double wrapping of xpra; needs more work though
-  #postFixup = ''
-  #  sed -i '2iexport XKB_BINDIR="${xkbcomp}/bin"' $out/bin/xpra
-  #  sed -i '3iexport FONTCONFIG_FILE="${fontsConf}"' $out/bin/xpra
-  #  sed -i '4iexport PATH=${getopt}/bin:${xorgserver}/bin:${xauth}/bin:${which}/bin:${utillinux}/bin\${PATH:+:}\$PATH' $out/bin/xpra
-  #'';
-
-
-  meta = {
+  meta = with stdenv.lib; {
     homepage = http://xpra.org/;
     description = "Persistent remote applications for X";
-    platforms = stdenv.lib.platforms.linux;
-    maintainers = with stdenv.lib.maintainers; [ tstrobel ];
+    platforms = platforms.linux;
+    license = licenses.gpl2;
+    maintainers = with aintainers; [ tstrobel ];
   };
 }
