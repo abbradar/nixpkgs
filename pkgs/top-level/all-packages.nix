@@ -14768,6 +14768,8 @@ in
 
   freedink = callPackage ../games/freedink { };
 
+  freeorion = callPackage ../games/freeorion { };
+
   fsg = callPackage ../games/fsg {
     wxGTK = wxGTK28.override { unicode = false; };
   };
