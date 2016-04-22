@@ -12,21 +12,15 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ unzip ];
 
-  phases = [ "installPhase" "fixupPhase" ];
+  buildCommand = ''
+    mkdir -p $out/lib/electron $out/bin
+    unzip -d $out/lib/electron $src
+    ln -s $out/lib/electron/electron $out/bin
 
-  unpackCmd = "unzip";
-
-  installPhase = ''
-    mkdir -p $out/bin
-    unzip -d $out/bin $src
-    patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
-    $out/bin/electron
-  '';
-
-  postFixup = ''
     patchelf \
-    --set-rpath "${atom.libPath}:$out/bin:$(patchelf --print-rpath $out/bin/electron)" \
-    $out/bin/electron
+      --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
+      --set-rpath "${atom.libPath}:$out/lib/electron" \
+      $out/lib/electron/electron
   '';
 
   meta = with stdenv.lib; {
