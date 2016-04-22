@@ -29,25 +29,23 @@ in stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ makeWrapper ];
 
-  phases = [ "installPhase" "fixupPhase" ];
-
-  installPhase = ''
-    mkdir -p $out
+  buildCommand = ''
+    mkdir -p $out/usr/
     ar p $src data.tar.gz | tar -C $out -xz ./usr
     substituteInPlace $out/usr/share/applications/atom.desktop \
       --replace /usr/share/atom $out/bin
     mv $out/usr/* $out/
     rm -r $out/share/lintian
     rm -r $out/usr/
+    wrapProgram $out/bin/atom \
+      --prefix "PATH" : "${gvfs}/bin"
+
     patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
+      --set-rpath "${libPath}:$out/share/atom" \
       $out/share/atom/atom
     patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
+      --set-rpath "${libPath}" \
       $out/share/atom/resources/app/apm/bin/node
-    wrapProgram $out/bin/atom \
-      --prefix "LD_LIBRARY_PATH" : "${libPath}" \
-      --prefix "PATH" : "${gvfs}/bin"
-    wrapProgram $out/bin/apm \
-      --prefix "LD_LIBRARY_PATH" : "${libPath}"
   '';
 
   passthru = {
