@@ -1,23 +1,6 @@
-{ stdenv, fetchurl, lib, makeDesktopItem, makeWrapper, zlib, glib, alsaLib
-, dbus, gtk, atk, pango, freetype, fontconfig, libgnome_keyring3, gdk_pixbuf
-, gvfs, cairo, cups, expat, libgpgerror, nspr, gconf, nss, xorg, libcap, systemd
-, libnotify
-}:
+{ stdenv, fetchurl, lib, makeWrapper, gvfs, atomEnv }:
 
-let
-  packages = [
-    stdenv.cc.cc zlib glib dbus gtk atk pango freetype libgnome_keyring3
-    fontconfig gdk_pixbuf cairo cups expat libgpgerror alsaLib nspr gconf nss
-    xorg.libXrender xorg.libX11 xorg.libXext xorg.libXdamage xorg.libXtst
-    xorg.libXcomposite xorg.libXi xorg.libXfixes xorg.libXrandr
-    xorg.libXcursor libcap systemd libnotify
-  ];
-
-  libPathNative = lib.makeLibraryPath packages;
-  libPath64 = lib.makeSearchPathOutputs "lib64" ["lib"] packages;
-  libPath = "${libPathNative}:${libPath64}";
-
-in stdenv.mkDerivation rec {
+stdenv.mkDerivation rec {
   name = "atom-${version}";
   version = "1.6.2";
 
@@ -41,16 +24,12 @@ in stdenv.mkDerivation rec {
       --prefix "PATH" : "${gvfs}/bin"
 
     patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
-      --set-rpath "${libPath}:$out/share/atom" \
+      --set-rpath "${atomEnv.libPath}:$out/share/atom" \
       $out/share/atom/atom
     patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
-      --set-rpath "${libPath}" \
+      --set-rpath "${atomEnv.libPath}" \
       $out/share/atom/resources/app/apm/bin/node
   '';
-
-  passthru = {
-    inherit packages libPath;
-  };
 
   meta = with stdenv.lib; {
     description = "A hackable text editor for the 21st Century";

@@ -1,4 +1,4 @@
-{ stdenv, lib, callPackage, fetchurl, unzip, atom }:
+{ stdenv, lib, callPackage, fetchurl, unzip, atomEnv }:
 
 stdenv.mkDerivation rec {
   name = "electron-${version}";
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
 
     patchelf \
       --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
-      --set-rpath "${atom.libPath}:$out/lib/electron" \
+      --set-rpath "${atomEnv.libPath}:$out/lib/electron" \
       $out/lib/electron/electron
   '';
 

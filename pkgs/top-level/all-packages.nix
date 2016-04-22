@@ -11644,9 +11644,11 @@ in
 
   artha = callPackage ../applications/misc/artha { };
 
-  atom = callPackage ../applications/editors/atom {
+  atomEnv = callPackage ../applications/editors/atom/env.nix {
     gconf = gnome.GConf;
   };
+
+  atom = callPackage ../applications/editors/atom { };
 
   aseprite = callPackage ../applications/editors/aseprite {
     giflib = giflib_4_1;

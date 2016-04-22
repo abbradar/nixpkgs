@@ -1,4 +1,4 @@
-{ stdenv, lib, callPackage, fetchurl, unzip, atom }:
+{ stdenv, lib, callPackage, fetchurl, unzip, atomEnv }:
 
 let
   version = "0.10.10";
@@ -34,7 +34,7 @@ in
     fixupPhase = lib.optionalString (stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux") ''
       patchelf \
         --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
-        --set-rpath "${atom.libPath}:$out/lib/vscode" \
+        --set-rpath "${atomEnv.libPath}:$out/lib/vscode" \
         $out/lib/vscode/code
     '';
 
