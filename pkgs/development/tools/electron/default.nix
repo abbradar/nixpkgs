@@ -1,10 +1,6 @@
-{ stdenv, callPackage, fetchurl, unzip
-, ...
-} @ args:
+{ stdenv, lib, callPackage, fetchurl, unzip, atom }:
 
-let
-  atomEnv = callPackage ./env-atom.nix (args);
-in stdenv.mkDerivation rec {
+stdenv.mkDerivation rec {
   name = "electron-${version}";
   version = "0.36.2";
 
@@ -14,7 +10,7 @@ in stdenv.mkDerivation rec {
     name = "${name}.zip";
   };
 
-  buildInputs = [ atomEnv unzip ];
+  buildInputs = [ unzip ];
 
   phases = [ "installPhase" "fixupPhase" ];
 
@@ -29,7 +25,7 @@ in stdenv.mkDerivation rec {
 
   postFixup = ''
     patchelf \
-    --set-rpath "${atomEnv}/lib:${atomEnv}/lib64:$out/bin:$(patchelf --print-rpath $out/bin/electron)" \
+    --set-rpath "${atom.libPath}:$out/bin:$(patchelf --print-rpath $out/bin/electron)" \
     $out/bin/electron
   '';
 

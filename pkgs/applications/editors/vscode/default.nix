@@ -1,9 +1,6 @@
-{ stdenv, callPackage, fetchurl, unzip
-, ...
-} @ args:
+{ stdenv, callPackage, fetchurl, unzip, atom }:
 
 let
-  atomEnv = callPackage ../../../development/tools/electron/env-atom.nix (args);
 
   version = "0.10.10";
   rev = "5b5f4db87c10345b9d5c8d0bed745bcad4533135";
@@ -42,7 +39,7 @@ in
     postFixup = ''
       ${if (stdenv.system == "i686-linux" || stdenv.system == "x86_64-linux") then ''
         patchelf \
-        --set-rpath "${atomEnv}/lib:${atomEnv}/lib64:$out/bin:$(patchelf --print-rpath $out/bin/code)" \
+        --set-rpath "${atom.libPath}:$out/bin:$(patchelf --print-rpath $out/bin/code)" \
         $out/bin/code
       '' else ""}
     '';

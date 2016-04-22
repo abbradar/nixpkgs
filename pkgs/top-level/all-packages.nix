@@ -5700,10 +5700,7 @@ in
 
   astyle = callPackage ../development/tools/misc/astyle { };
 
-  electron = callPackage ../development/tools/electron {
-    gconf = pkgs.gnome.GConf;
-  };
-
+  electron = callPackage ../development/tools/electron { };
 
   autobuild = callPackage ../development/tools/misc/autobuild { };
 
@@ -14253,9 +14250,7 @@ in
 
   vorbis-tools = callPackage ../applications/audio/vorbis-tools { };
 
-  vscode = callPackage ../applications/editors/vscode {
-    gconf = pkgs.gnome.GConf;
-  };
+  vscode = callPackage ../applications/editors/vscode { };
 
   vue = callPackage ../applications/misc/vue { };
 
