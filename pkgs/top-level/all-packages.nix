@@ -15797,6 +15797,8 @@ in
       openjpeg = openjpeg_1;
     };
 
+    krita-patched = callPackage ../applications/graphics/krita/patched.nix { };
+
     phonon = callPackage ../development/libraries/phonon { };
 
     phonon-backend-gstreamer = callPackage ../development/libraries/phonon/backends/gstreamer.nix { };
