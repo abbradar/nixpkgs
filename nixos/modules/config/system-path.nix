@@ -154,6 +154,9 @@ in
                 $out/bin/install-info $i $out/share/info/dir
             done
           fi
+
+          rm -rf $out/lib/libQt* || true
+          rm -rf $out/lib/qt5 || true
         '';
     };
 
