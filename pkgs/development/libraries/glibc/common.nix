@@ -28,16 +28,16 @@ stdenv.mkDerivation ({
   enableParallelBuilding = true;
 
   patches =
-    [ /* Have rpcgen(1) look for cpp(1) in $PATH.  */
+    [ /* Have rpcgen(1) look for cpp(1) in $PATH. */
       ./rpcgen-path.patch
 
       /* Allow NixOS and Nix to handle the locale-archive. */
       ./nix-locale-archive.patch
 
-      /* Don't use /etc/ld.so.cache, for non-NixOS systems.  */
+      /* Don't use /etc/ld.so.cache, but /etc/ld-nix.so.cache. */
       ./dont-use-system-ld-so-cache.patch
 
-      /* Don't use /etc/ld.so.preload, but /etc/ld-nix.so.preload.  */
+      /* Don't use /etc/ld.so.preload, but /etc/ld-nix.so.preload. */
       ./dont-use-system-ld-so-preload.patch
 
       /* Add blowfish password hashing support.  This is needed for
