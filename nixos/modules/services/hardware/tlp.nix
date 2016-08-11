@@ -73,7 +73,7 @@ in
           ExecStop = "${tlp}/bin/tlp init stop";
         };
 
-        environment.MODULE_DIR="/run/current-system/kernel-modules/lib/modules/";
+        environment.MODULE_DIR="/run/booted-system/kernel-modules/lib/modules/";
       };
 
       tlp-sleep = {
@@ -93,7 +93,7 @@ in
           ExecStop = "${tlp}/bin/tlp resume";
         };
 
-        environment.MODULE_DIR="/run/current-system/kernel-modules/lib/modules/";
+        environment.MODULE_DIR="/run/booted-system/kernel-modules/lib/modules/";
       };
     };
 
