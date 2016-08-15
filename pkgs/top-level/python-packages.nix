@@ -65,7 +65,7 @@ in modules // {
           /\\$/{N;br}
           /__future__|^ *(#.*)?$/{n;br}
           ${concatImapStrings mkStringSkipper quoteVariants}
-          /^ *[^# ]/i import sys; sys.argv[0] = '"'$(basename "$f")'"'
+          /^ *[^# ]/i import sys; sys.argv[0] = '"'$(basename "$f")'"'; sys.path.extend(['"$([ -n "$program_PYTHONPATH" ] && (echo "'$program_PYTHONPATH'" | sed "s|:|','|g") || true)"'])
         }
       '';
     }
