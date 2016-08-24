@@ -59,11 +59,10 @@ following incompatible changes:</para>
   </listitem>
 
   <listitem>
-    <para><literal>fonts.fontconfig.ultimate.rendering</literal> was removed
-    because our presets were obsolete for some time. New presets are hardcoded
-    into freetype; one selects a preset via <literal>fonts.fontconfig.ultimate.preset</literal>.
-    You can customize those presets via ordinary environment variables, using
-    <literal>environment.variables</literal>.</para>
+    <para><literal>fonts.fontconfig.ultimate.rendering</literal> now accepts
+    a preset name (one of hardcoded into fontconfig-ultimate) or an attribute
+    set like before. Outdated presets in <literal>pkgs.fontconfig-ultimate.rendering</literal>
+    were removed.
   </listitem>
 
 </itemizedlist>

@@ -164,12 +164,15 @@ in
             '';
           };
 
-          preset = mkOption {
-            type = types.enum ["ultimate1" "ultimate2" "ultimate3" "ultimate4" "ultimate5" "osx" "windowsxp"];
+          rendering = mkOption {
+            type = types.either (types.enum ["ultimate1" "ultimate2" "ultimate3" "ultimate4" "ultimate5" "osx" "windowsxp"]) types.attrs;
             default = "ultimate3";
+            example = {
+              INFINALITY_FT_BRIGHTNESS = 10;
+            };
             description = ''
-              FreeType rendering settings preset. Any of the presets may be
-              customized by setting environment variables.
+              FreeType rendering settings. Can be either a preset name
+              or an attribute set with settings.
             '';
           };
         };
@@ -181,7 +184,9 @@ in
   config = mkIf (config.fonts.fontconfig.enable && cfg.enable) {
 
     fonts.fontconfig.confPackages = [ confPkg ];
-    environment.variables."INFINALITY_FT" = cfg.preset;
+    environment.variables =
+      if isAttrs cfg.rendering then cfg.rendering
+      else { "INFINALITY_FT" = cfg.rendering; };
 
   };
 
