@@ -42,6 +42,7 @@
 , "npm-check-updates"
 , "peerflix"
 , "peerflix-server"
+, "parsoid"
 , "phantomjs"
 , "react-tools"
 , "s3http"
