@@ -65,7 +65,7 @@ in
 
       pmMethod = mkOption {
         default = "auto";
-        type = types.enum [ "auto" "bbswitch" "switcheroo" "none" ];
+        type = types.enum [ "auto" "nouveau" "bbswitch" "switcheroo" "none" ];
         description = ''
           Set preferred power management method for unused card.
         '';
