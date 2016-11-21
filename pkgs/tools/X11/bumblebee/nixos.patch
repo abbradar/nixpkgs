@@ -1,3 +1,14 @@
+From 17336b320d35c6a6bc2ccd17960110b71d7c5fd9 Mon Sep 17 00:00:00 2001
+From: Nikolay Amiantov <ab@fmap.me>
+Date: Sun, 29 Jan 2017 23:09:09 +0300
+Subject: [PATCH] NixOS compatibility
+
+---
+ conf/xorg.conf.nouveau |  1 +
+ conf/xorg.conf.nvidia  |  4 ++--
+ src/bbsecondary.c      | 25 +++++++++++++++++++++----
+ 3 files changed, 24 insertions(+), 6 deletions(-)
+
 diff --git a/conf/xorg.conf.nouveau b/conf/xorg.conf.nouveau
 index 87e48cb..60d6eaf 100644
 --- a/conf/xorg.conf.nouveau
@@ -9,21 +20,19 @@ index 87e48cb..60d6eaf 100644
 +@nouveauDeviceOptions@
  EndSection
 diff --git a/conf/xorg.conf.nvidia b/conf/xorg.conf.nvidia
-index 5bd686e..e8eb6c3 100644
+index 5bd686e..7ad0528 100644
 --- a/conf/xorg.conf.nvidia
 +++ b/conf/xorg.conf.nvidia
-@@ -29,8 +29,8 @@ Section "Device"
+@@ -29,8 +29,6 @@ Section "Device"
      Option "ProbeAllGpus" "false"
  
      Option "NoLogo" "true"
 -    Option "UseEDID" "false"
 -    Option "UseDisplayDevice" "none"
-+#   Option "UseEDID" "false"
-+#   Option "UseDisplayDevice" "none"
  
  #   If your NVIDIA drivers are version 331.13 or newer, and you have a laptop
  #   where some of the video outputs such as HDMI or DisplayPort are connected
-@@ -40,4 +40,6 @@ Section "Device"
+@@ -40,4 +38,6 @@ Section "Device"
  #   allowing the X server to start when the monitor is disconnected.
  
  #   Option "AllowEmptyInitialConfiguration"
@@ -31,7 +40,7 @@ index 5bd686e..e8eb6c3 100644
 +@nvidiaDeviceOptions@
  EndSection
 diff --git a/src/bbsecondary.c b/src/bbsecondary.c
-index efbc78e..a542b44 100644
+index 3deeb58..3bddf85 100644
 --- a/src/bbsecondary.c
 +++ b/src/bbsecondary.c
 @@ -145,6 +145,23 @@ bool start_secondary(bool need_secondary) {
@@ -58,7 +67,7 @@ index efbc78e..a542b44 100644
      char *x_argv[] = {
        bb_config.xorg_binary,
        bb_config.x_display,
-@@ -153,9 +170,11 @@ bool start_secondary(bool need_secondary) {
+@@ -153,9 +170,10 @@ bool start_secondary(bool need_secondary) {
        "-sharevts",
        "-nolisten", "tcp",
        "-noreset",
@@ -70,7 +79,7 @@ index efbc78e..a542b44 100644
        NULL
      };
      char **argvp;
-@@ -165,18 +184,17 @@ bool start_secondary(bool need_secondary) {
+@@ -165,18 +183,17 @@ bool start_secondary(bool need_secondary) {
      }
      bb_log(LOG_DEBUG, "\n");
      enum {n_x_args = sizeof(x_argv) / sizeof(x_argv[0])};
@@ -91,3 +100,6 @@ index efbc78e..a542b44 100644
      //close the end of the pipe that is not ours
      if (bb_status.x_pipe[1] != -1){close(bb_status.x_pipe[1]); bb_status.x_pipe[1] = -1;}
    }
+-- 
+2.11.0
+

@@ -16,7 +16,7 @@
 #
 # To use at startup, see hardware.bumblebee options.
 
-{ stdenv, lib, fetchFromGitHub, pkgconfig, help2man, makeWrapper, autoreconfHook
+{ stdenv, lib, fetchFromGitHub, fetchpatch, pkgconfig, help2man, makeWrapper, autoreconfHook
 , glib, libbsd
 , libX11, libXext, xorgserver, xkbcomp, kmod, xf86videonouveau
 , nvidia_x11, virtualgl, libglvnd, primusLib
@@ -53,15 +53,20 @@ let
 in stdenv.mkDerivation rec {
   name = "bumblebee-2016-11-08";
 
-  src = fetchFromGitHub {
-    owner = "Bumblebee-Project";
-    repo = "Bumblebee";
-    rev = "c322bd849aabe6e48b4304b8d13cc4aadc36a30d";
-    sha256 = "1g6dnnk75lbma8ikhahpc4g93zgqg063w9xbhz6583q13cs6rzam";
-  };
+  #src = fetchFromGitHub {
+  #  owner = "Bumblebee-Project";
+  #  repo = "Bumblebee";
+  #  rev = "c322bd849aabe6e48b4304b8d13cc4aadc36a30d";
+  #  sha256 = "1g6dnnk75lbma8ikhahpc4g93zgqg063w9xbhz6583q13cs6rzam";
+  #};
+  src = /home/shlomo/projects/Bumblebee;
 
   patches = [
     ./nixos.patch
+    #(fetchpatch {
+    #  url = "https://github.com/abbradar/Bumblebee/commit/7b797bd847527fd1c87f053ee84c12833ab838ee.patch";
+    #  sha256 = "0w582k333bha6nadzi95k6zx7jjf3mn8jmdppjdywmfi90gvypmm";
+    #})
   ];
 
   # By default we don't want to use a display device
