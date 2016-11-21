@@ -16,11 +16,10 @@
 #
 # To use at startup, see hardware.bumblebee options.
 
-{ stdenv, lib, fetchurl, fetchpatch, pkgconfig, help2man, makeWrapper
+{ stdenv, lib, fetchFromGitHub, pkgconfig, help2man, makeWrapper, autoreconfHook
 , glib, libbsd
 , libX11, libXext, xorgserver, xkbcomp, kmod, xf86videonouveau
 , nvidia_x11, virtualgl, libglvnd, primusLib
-, automake111x, autoconf
 # The below should only be non-null in a x86_64 system. On a i686
 # system the above nvidia_x11 and virtualgl will be the i686 packages.
 # TODO: Confusing. Perhaps use "SubArch" instead of i686?
@@ -34,8 +33,6 @@
 }:
 
 let
-  version = "3.2.1";
-
   primus = if useNvidia then primusLib else primusLib.override { nvidia_x11 = null; };
   primus_i686 = if useNvidia then primusLib_i686 else primusLib_i686.override { nvidia_x11 = null; };
 
@@ -53,32 +50,25 @@ let
 
   xmodules = lib.concatStringsSep "," (map (x: "${x.out or x}/lib/xorg/modules") ([ xorgserver ] ++ lib.optional (!useNvidia) xf86videonouveau));
 
-  modprobePatch = fetchpatch {
-    url = "https://github.com/Bumblebee-Project/Bumblebee/commit/1ada79fe5916961fc4e4917f8c63bb184908d986.patch";
-    sha256 = "02vq3vba6nx7gglpjdfchws9vjhs1x02a543yvqrxqpvvdfim2x2";
-  };
-  libkmodPatch = fetchpatch {
-    url = "https://github.com/Bumblebee-Project/Bumblebee/commit/deceb14cdf2c90ff64ebd1010a674305464587da.patch";
-    sha256 = "00c05i5lxz7vdbv445ncxac490vbl5g9w3vy3gd71qw1f0si8vwh";
-  };
-
 in stdenv.mkDerivation rec {
-  name = "bumblebee-${version}";
+  name = "bumblebee-2016-11-08";
 
-  src = fetchurl {
-    url = "http://bumblebee-project.org/${name}.tar.gz";
-    sha256 = "03p3gvx99lwlavznrpg9l7jnl1yfg2adcj8jcjj0gxp20wxp060h";
+  src = fetchFromGitHub {
+    owner = "Bumblebee-Project";
+    repo = "Bumblebee";
+    rev = "c322bd849aabe6e48b4304b8d13cc4aadc36a30d";
+    sha256 = "1g6dnnk75lbma8ikhahpc4g93zgqg063w9xbhz6583q13cs6rzam";
   };
 
   patches = [
     ./nixos.patch
-
-    modprobePatch
-    libkmodPatch
   ];
 
   # By default we don't want to use a display device
-  nvidiaDeviceOptions = lib.optionalString (!useDisplayDevice) ''
+  nvidiaDeviceOptions = if useDisplayDevice then ''
+    # Allow X.org to start with disconnected monitor
+    Option "AllowEmptyInitialConfiguration"
+  '' else ''
     # Disable display device
     Option "UseEDID" "false"
     Option "UseDisplayDevice" "none"
@@ -86,17 +76,10 @@ in stdenv.mkDerivation rec {
 
   nouveauDeviceOptions = extraNouveauDeviceOptions;
 
-  # the have() function is deprecated and not available to bash completions the
-  # way they are currently loaded in NixOS, so use _have. See #10936
   postPatch = ''
-    substituteInPlace scripts/bash_completion/bumblebee \
-      --replace "have optirun" "_have optirun"
-  '';
-
-  preConfigure = ''
     # Don't use a special group, just reuse wheel.
-    substituteInPlace configure \
-      --replace 'CONF_GID="bumblebee"' 'CONF_GID="wheel"'
+    substituteInPlace configure.ac \
+      --replace 'CONF_GID, "bumblebee"' 'CONF_GID, "wheel"'
 
     # Apply configuration options
     substituteInPlace conf/xorg.conf.nvidia \
@@ -109,7 +92,7 @@ in stdenv.mkDerivation rec {
   # Build-time dependencies of bumblebeed and optirun.
   # Note that it has several runtime dependencies.
   buildInputs = [ libX11 glib libbsd kmod ];
-  nativeBuildInputs = [ makeWrapper pkgconfig help2man automake111x autoconf ];
+  nativeBuildInputs = [ makeWrapper pkgconfig help2man autoreconfHook ];
 
   # The order of LDPATH is very specific: First X11 then the host
   # environment then the optional sub architecture paths.
