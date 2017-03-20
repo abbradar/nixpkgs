@@ -108,7 +108,9 @@ rec {
           mkdir -p $out/bin
           echo "$testScript" > $out/test-script
           ln -s ${testDriver}/bin/nixos-test-driver $out/bin/
-          vms="$(for i in ${toString vms}; do echo $i/bin/run-*-vm; done)"
+          vms=($(for i in ${toString vms}; do echo $i/bin/run-*-vm; done))
+          # Somehow arrays break makeProgram if passed as arguments.
+          vms="''${vms[@]}"
           wrapProgram $out/bin/nixos-test-driver \
             --add-flags "$vms" \
             ${lib.optionalString enableOCR "--prefix PATH : '${ocrProg}/bin'"} \
