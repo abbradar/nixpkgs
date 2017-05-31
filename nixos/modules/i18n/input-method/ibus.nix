@@ -4,10 +4,10 @@ with lib;
 
 let
   cfg = config.i18n.inputMethod.ibus;
-  ibusPackage = pkgs.ibus-with-plugins.override { plugins = cfg.engines; };
-  ibusEngine = types.package // {
-    name  = "ibus-engine";
-    check = x: (lib.types.package.check x) && (attrByPath ["meta" "isIbusEngine"] false x);
+  ibusPackage = pkgs: pkgs.ibus-with-plugins.override { plugins = cfg.engines pkgs; };
+  ibusEngines = types.function types.attrs (types.listOf types.package) // {
+    name  = "ibusEngines";
+    check = x: isFunction x && (all (attrByPath ["meta" "isIbusEngine"] false) (x pkgs));
   };
 
   impanel =
@@ -22,7 +22,7 @@ let
       [Desktop Entry]
       Name=IBus
       Type=Application
-      Exec=${ibusPackage}/bin/ibus-daemon --daemonize --xim ${impanel}
+      Exec=${ibusPackage pkgs}/bin/ibus-daemon --daemonize --xim ${impanel}
     '';
   };
 in
@@ -30,9 +30,9 @@ in
   options = {
     i18n.inputMethod.ibus = {
       engines = mkOption {
-        type    = with types; listOf ibusEngine;
+        type    = ibusEngines;
         default = [];
-        example = literalExample "with pkgs.ibus-engines; [ mozc hangul ]";
+        example = literalExample "pkgs: with pkgs.ibus-engines; [ mozc hangul ]";
         description =
           let
             enginesDrv = filterAttrs (const isDerivation) pkgs.ibus-engines;

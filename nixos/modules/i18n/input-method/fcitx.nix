@@ -4,10 +4,10 @@ with lib;
 
 let
   cfg = config.i18n.inputMethod.fcitx;
-  fcitxPackage = pkgs.fcitx.override { plugins = cfg.engines; };
-  fcitxEngine = types.package // {
-    name  = "fcitx-engine";
-    check = x: (lib.types.package.check x) && (attrByPath ["meta" "isFcitxEngine"] false x);
+  fcitxPackage = pkgs: pkgs.fcitx.override { plugins = cfg.engines pkgs; };
+  fcitxEngines = types.function types.attrs (types.listOf types.package) // {
+    name  = "fcitxEngines";
+    check = x: isFunction x && (all (attrByPath ["meta" "isFcitxEngine"] false) (x pkgs));
   };
 in
 {
@@ -15,9 +15,9 @@ in
 
     i18n.inputMethod.fcitx = {
       engines = mkOption {
-        type    = with types; listOf fcitxEngine;
+        type    = fcitxEngines;
         default = [];
-        example = literalExample "with pkgs.fcitx-engines; [ mozc hangul ]";
+        example = literalExample "pkgs: with pkgs.fcitx-engines; [ mozc hangul ]";
         description =
           let
             enginesDrv = filterAttrs (const isDerivation) pkgs.fcitx-engines;
@@ -38,6 +38,6 @@ in
       QT_IM_MODULE  = "fcitx";
       XMODIFIERS    = "@im=fcitx";
     };
-    services.xserver.displayManager.sessionCommands = "${fcitxPackage}/bin/fcitx";
+    services.xserver.displayManager.sessionCommands = "${fcitxPackage pkgs}/bin/fcitx";
   };
 }
