@@ -4,10 +4,6 @@ with lib;
 
 let
 
-  pkg = if config.hardware.sane.snapshot
-    then pkgs.sane-backends-git
-    else pkgs.sane-backends;
-
   sanedConf = pkgs.writeTextFile {
     name = "saned.conf";
     destination = "/etc/sane.d/saned.conf";
@@ -26,13 +22,16 @@ let
     '';
   };
 
-  env = {
-    SANE_CONFIG_DIR = config.hardware.sane.configDir;
-    LD_LIBRARY_PATH = [ "${saneConfig}/lib/sane" ];
-  };
+  mkBackends = pkgs:
+    [ ( if config.hardware.sane.snapshot
+        then pkgs.sane-backends-git
+        else pkgs.sane-backends )
+    ] ++ config.hardware.sane.extraBackends pkgs;
+  backends = mkBackends pkgs;
 
-  backends = [ pkg netConf ] ++ optional config.services.saned.enable sanedConf ++ config.hardware.sane.extraBackends;
-  saneConfig = pkgs.mkSaneConfig { paths = backends; };
+  configPaths = mkBackends pkgs ++ [ netConf ] ++ optional config.services.saned.enable sanedConf;
+
+  saneConfig = pkgs.mkSaneConfig { paths = configPaths; };
 
   enabled = config.hardware.sane.enable || config.services.saned.enable;
 
@@ -63,8 +62,8 @@ in
     };
 
     hardware.sane.extraBackends = mkOption {
-      type = types.listOf types.path;
-      default = [];
+      type = types.function types.attrs (types.listOf types.package);
+      default = pkgs: [];
       description = ''
         Packages providing extra SANE backends to enable.
 
@@ -72,7 +71,7 @@ in
           The example contains the package for HP scanners.
         </para></note>
       '';
-      example = literalExample "[ pkgs.hplipWithPlugin ]";
+      example = literalExample "pkgs: [ pkgs.hplipWithPlugin ]";
     };
 
     hardware.sane.configDir = mkOption {
@@ -120,11 +119,14 @@ in
     (mkIf enabled {
       hardware.sane.configDir = mkDefault "${saneConfig}/etc/sane.d";
 
+      environment.etc."sane.d".source = config.hardware.sane.configDir;
       environment.systemPackages = backends;
-      environment.sessionVariables = env;
       services.udev.packages = backends;
+      libraries.packages = mkBackends;
 
       users.extraGroups."scanner".gid = config.ids.gids.scanner;
+
+      libraries.environment."LD_LIBRARY_PATH" = [ "lib/sane" ];
     })
 
     (mkIf config.services.saned.enable {
@@ -132,7 +134,6 @@ in
 
       systemd.services."saned@" = {
         description = "Scanner Service";
-        environment = mapAttrs (name: val: toString val) env;
         serviceConfig = {
           User = "scanner";
           Group = "scanner";
