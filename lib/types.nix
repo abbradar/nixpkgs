@@ -367,7 +367,7 @@ rec {
         name = "coercedTo";
         description = "${finalType.description} or ${coercedType.description}";
         check = x: finalType.check x || coercedType.check x;
-        merge = loc: defs:
+        merge =
           let
             coerceVal = val:
               if finalType.check val then val
@@ -375,12 +375,37 @@ rec {
                 coerced = coerceFunc val;
               in assert finalType.check coerced; coerced;
 
-          in finalType.merge loc (map (def: def // { value = coerceVal def.value; }) defs);
+          in loc: defs: finalType.merge loc (map (def: def // { value = coerceVal def.value; }) defs);
         getSubOptions = finalType.getSubOptions;
         getSubModules = finalType.getSubModules;
         substSubModules = m: coercedTo coercedType coerceFunc (finalType.substSubModules m);
         typeMerge = t1: t2: null;
         functor = (defaultFunctor name) // { wrapped = finalType; };
+      };
+
+    # Function from `from` to `to`.
+    function = from: to:
+      assert from.getSubModules == null;
+      mkOptionType rec {
+        name = "function";
+        description = "function that accepts ${from.description} and returns ${to.description}";
+        check = isFunction;
+        merge = loc: defs:
+            let
+              checkRet = file: res:
+                if to.check res
+                then res
+                else throw "Option `${showOption loc}' expects a function to return ${to.description}, in `${file}.`";
+
+            in arg:
+              if from.check arg
+              then to.merge loc (map (f: f // { value = checkRet f.file (f.value arg); }) defs)
+              else throw "Option `${showOption loc}' expects a function to accept ${from.description}.";
+        getSubOptions = to.getSubOptions;
+        getSubModules = to.getSubModules;
+        substSubModules = m: function from (to.substSubModules m);
+        typeMerge = t1: t2: null;
+        functor = (defaultFunctor name) // { wrapped = to; };
       };
 
     # Obsolete alternative to configOf.  It takes its option
