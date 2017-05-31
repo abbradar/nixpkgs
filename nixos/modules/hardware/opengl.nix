@@ -10,23 +10,13 @@ let
 
   videoDrivers = config.services.xserver.videoDrivers;
 
-  makePackage = p: pkgs.buildEnv {
+  makePackage = p: p.buildEnv {
     name = "mesa-drivers+txc-${p.mesa_drivers.version}";
-    paths =
-      [ p.mesa_drivers
-        p.mesa_drivers.out # mainly for libGL
-        (if cfg.s3tcSupport then p.libtxc_dxtn else p.libtxc_dxtn_s2tc)
-      ];
-  };
-
-  package = pkgs.buildEnv {
-    name = "opengl-drivers";
-    paths = [ cfg.package ] ++ cfg.extraPackages;
-  };
-
-  package32 = pkgs.buildEnv {
-    name = "opengl-drivers-32bit";
-    paths = [ cfg.package32 ] ++ cfg.extraPackages32;
+    paths = [
+      p.mesa_drivers
+      p.mesa_drivers.out # mainly for libGL
+      (if cfg.s3tcSupport then p.libtxc_dxtn else p.libtxc_dxtn_s2tc)
+    ];
   };
 
 in
@@ -38,27 +28,6 @@ in
       type = types.bool;
       default = false;
       internal = true;
-    };
-
-    hardware.opengl.driSupport = mkOption {
-      type = types.bool;
-      default = true;
-      description = ''
-        Whether to enable accelerated OpenGL rendering through the
-        Direct Rendering Interface (DRI).
-      '';
-    };
-
-    hardware.opengl.driSupport32Bit = mkOption {
-      type = types.bool;
-      default = false;
-      description = ''
-        On 64-bit systems, whether to support Direct Rendering for
-        32-bit applications (such as Wine).  This is currently only
-        supported for the <literal>nvidia</literal> and 
-        <literal>ati_unfree</literal> drivers, as well as
-        <literal>Mesa</literal>.
-      '';
     };
 
     hardware.opengl.s3tcSupport = mkOption {
@@ -73,41 +42,10 @@ in
     };
 
     hardware.opengl.package = mkOption {
-      type = types.package;
+      type = types.function types.attrs types.package;
       internal = true;
       description = ''
-        The package that provides the OpenGL implementation.
-      '';
-    };
-
-    hardware.opengl.package32 = mkOption {
-      type = types.package;
-      internal = true;
-      description = ''
-        The package that provides the 32-bit OpenGL implementation on
-        64-bit systems. Used when <option>driSupport32Bit</option> is
-        set.
-      '';
-    };
-
-    hardware.opengl.extraPackages = mkOption {
-      type = types.listOf types.package;
-      default = [];
-      example = literalExample "with pkgs; [ vaapiIntel libvdpau-va-gl vaapiVdpau ]";
-      description = ''
-        Additional packages to add to OpenGL drivers. This can be used
-        to add OpenCL drivers, VA-API/VDPAU drivers etc.
-      '';
-    };
-
-    hardware.opengl.extraPackages32 = mkOption {
-      type = types.listOf types.package;
-      default = [];
-      example = literalExample "with pkgs.pkgsi686Linux; [ vaapiIntel libvdpau-va-gl vaapiVdpau ]";
-      description = ''
-        Additional packages to add to 32-bit OpenGL drivers on
-        64-bit systems. Used when <option>driSupport32Bit</option> is
-        set. This can be used to add OpenCL drivers, VA-API/VDPAU drivers etc.
+        The package function that provides the OpenGL implementation.
       '';
     };
 
@@ -115,32 +53,22 @@ in
 
   config = mkIf cfg.enable {
 
-    assertions = lib.singleton {
-      assertion = cfg.driSupport32Bit -> pkgs.stdenv.isx86_64;
-      message = "Option driSupport32Bit only makes sense on a 64-bit system.";
-    };
-
-    system.activationScripts.setup-opengl =
-      ''
-        ln -sfn ${package} /run/opengl-driver
-        ${if pkgs.stdenv.isi686 then ''
-          ln -sfn opengl-driver /run/opengl-driver-32
-        '' else if cfg.driSupport32Bit then ''
-          ln -sfn ${package32} /run/opengl-driver-32
-        '' else ''
-          rm -f /run/opengl-driver-32
-        ''}
-      '';
-
-    environment.sessionVariables.LD_LIBRARY_PATH =
-      [ "/run/opengl-driver/lib" ] ++ optional cfg.driSupport32Bit "/run/opengl-driver-32/lib";
-
-    environment.variables.XDG_DATA_DIRS =
-      [ "/run/opengl-driver/share" ] ++ optional cfg.driSupport32Bit "/run/opengl-driver-32/share";
-
-    hardware.opengl.package = mkDefault (makePackage pkgs);
-    hardware.opengl.package32 = mkDefault (makePackage pkgs_i686);
+    hardware.opengl.package = mkDefault makePackage;
 
     boot.extraModulePackages = optional (elem "virtualbox" videoDrivers) kernelPackages.virtualboxGuestAdditions;
+
+    libraries.unsafePackages = pkgs: [ (cfg.package pkgs) ];
+
+    # Backwards compatibility.
+    system.activationScripts.setup-opengl =
+      ''
+        if [ -L /run/opengl-driver ]; then
+          ln -sfn /run/current-system/${pkgs.stdenv.system}-lib /run/opengl-driver
+        fi
+        if [ -L /run/opengl-driver-32 ]; then
+          ln -sfn /run/current-system/${pkgs.pkgsi686Linux.stdenv.system}-lib /run/opengl-driver-32
+        fi
+      '';
+
   };
 }
