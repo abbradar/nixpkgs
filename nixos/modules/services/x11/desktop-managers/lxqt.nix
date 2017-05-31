@@ -59,7 +59,7 @@ in
       "/share/lxqt"
     ];
 
-    environment.variables.GIO_EXTRA_MODULES = [ "${pkgs.gvfs}/lib/gio/modules" ];
+    libraries.packages = pkgs: [ pkgs.gvfs ];
 
   };
 
