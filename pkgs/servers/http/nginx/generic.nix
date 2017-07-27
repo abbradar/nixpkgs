@@ -49,13 +49,15 @@ stdenv.mkDerivation {
 
   NIX_CFLAGS_COMPILE = [ "-I${libxml2.dev}/include/libxml2" ] ++ optional stdenv.isDarwin "-Wno-error=deprecated-declarations";
 
-  preConfigure = (concatMapStringsSep "\n" (mod: mod.preConfigure or "") modules);
+  preConfigure = ''
+    ${concatMapStringsSep "\n" (mod: mod.preConfigure or "") modules}
+
+    configureFlags="--prefix=$out/etc/nginx --sbin-path=$out/bin/nginx $configureFlags"
+  '';
+
+  enableParallelBuilding = true;
 
   hardeningEnable = [ "pie" ];
-
-  postInstall = ''
-    mv $out/sbin $out/bin
-  '';
 
   meta = {
     description = "A reverse proxy and lightweight webserver";

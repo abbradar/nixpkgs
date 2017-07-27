@@ -34,8 +34,8 @@ let
 
     ${optionalString (cfg.httpConfig == "" && cfg.config == "") ''
     http {
-      include ${cfg.package}/conf/mime.types;
-      include ${cfg.package}/conf/fastcgi.conf;
+      include ${cfg.package}/etc/nginx/mime.types;
+      include ${cfg.package}/etc/nginx/fastcgi.conf;
 
       ${optionalString (cfg.recommendedOptimisation) ''
         # optimisation
@@ -114,8 +114,8 @@ let
 
     ${optionalString (cfg.httpConfig != "") ''
     http {
-      include ${cfg.package}/conf/mime.types;
-      include ${cfg.package}/conf/fastcgi.conf;
+      include ${cfg.package}/etc/nginx/mime.types;
+      include ${cfg.package}/etc/nginx/fastcgi.conf;
       ${cfg.httpConfig}
     }''}
 
