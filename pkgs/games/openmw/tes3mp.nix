@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, qtbase, openscenegraph, mygui, bullet, ffmpeg, boost, cmake, SDL2, unshield, openal
+{ stdenv, fetchFromGitHub, fetchpatch, qtbase, openscenegraph, mygui, bullet, ffmpeg, boost, cmake, SDL2, unshield, openal
 , libXt, writeScriptBin, makeWrapper, symlinkJoin, ncurses, mesa_noglu, terra }:
 
 let
@@ -60,15 +60,32 @@ in stdenv.mkDerivation rec {
   buildInputs = [ boost ffmpeg qtbase bullet mygui_ openscenegraph SDL2 unshield openal libXt
     ncurses mesa_noglu ];
 
-  buildPhase = ''
+  prePatch = ''
     mkdir dependencies keepers
     cp --no-preserve=mode -r ${TES3MP} code
-    mkdir code/.git
     cp --no-preserve=mode -r ${CallFF} dependencies/callff
     cp --no-preserve=mode -r ${RakNet} dependencies/raknet
     cp --no-preserve=mode -r ${PluginExamples} keepers/PluginExamples
-    ln -s ${terra_} dependencies/terra
+  '';
 
+  tesPatches = [
+    (fetchpatch {
+      url = "https://github.com/TES3MP/openmw-tes3mp/commit/bfbfbeac437c42051f09af08ec2d9f627246c268.patch";
+      sha256 = "0qr5fbz4g9r0fvrxbvgl9qw2myizxzwffl05l4n167y8gf1xzxbh";
+    })
+  ];
+
+  postPatch = ''
+    cd code
+    for p in $tesPatches; do
+      patch -p1 < $p
+    done
+    cd ..
+  '';
+
+  buildPhase = ''
+    mkdir code/.git
+    ln -s ${terra_} dependencies/terra
     substituteInPlace tes3mp-deploy.sh \
       --replace "-DBUILD_OPENCS=OFF" "-DBUILD_OPENCS=OFF -DCMAKE_INSTALL_PREFIX=$out"
     patchShebangs tes3mp-deploy.sh
