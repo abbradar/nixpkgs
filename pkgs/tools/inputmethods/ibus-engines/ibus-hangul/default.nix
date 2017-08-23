@@ -15,7 +15,10 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ intltool pkgconfig python3.pkgs.wrapPython ];
 
-  postFixup = "wrapPythonPrograms";
+  postFixup = ''
+    wrapPythonPrograms
+    patchPythonScript $out/share/ibus-hangul/setup/main.py
+  '';
 
   meta = with stdenv.lib; {
     isIbusEngine = true;
