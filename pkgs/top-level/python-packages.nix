@@ -26716,6 +26716,8 @@ EOF
     };
   };
 
+  tensorflow-tensorboard = callPackage ../development/python-modules/tensorflow-tensorboard { };
+
   tensorflow = self.tensorflowWithoutCuda;
 
   tensorflowWithoutCuda = callPackage ../development/python-modules/tensorflow { };
