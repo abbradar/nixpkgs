@@ -10,6 +10,7 @@
 , enablePIC ? false
 , enableExceptions ? false
 , enablePython ? false
+, enableNumpy ? false, numpy ? null
 , taggedLayout ? ((enableRelease && enableDebug) || (enableSingleThreaded && enableMultiThreaded) || (enableShared && enableStatic))
 , patches ? null
 , mpi ? null
@@ -23,6 +24,7 @@
 assert !enableShared -> enableStatic;
 
 assert enablePython -> hostPlatform == buildPlatform;
+assert enableNumpy -> enablePython;
 
 with stdenv.lib;
 let
@@ -153,7 +155,8 @@ stdenv.mkDerivation {
   buildInputs = [ expat zlib bzip2 libiconv ]
     ++ optional (hostPlatform == buildPlatform) icu
     ++ optional stdenv.isDarwin fixDarwinDylibNames
-    ++ optional enablePython python;
+    ++ optional enablePython python
+    ++ optional enableNumpy numpy;
 
   configureScript = "./bootstrap.sh";
   configureFlags = commonConfigureFlags

@@ -1475,8 +1475,9 @@ in {
   # Build boost for this specific Python version
   # TODO: use separate output for libboost_python.so
   boost = pkgs.boost.override {
-    inherit (self) python;
+    inherit (self) python numpy;
     enablePython = true;
+    enableNumpy = true;
   };
 
   buttersink = buildPythonPackage rec {
