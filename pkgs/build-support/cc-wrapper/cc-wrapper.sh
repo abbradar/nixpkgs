@@ -30,6 +30,7 @@ nonFlagArgs=0
 # shellcheck disable=SC2193
 [[ "@prog@" = *++ ]] && isCpp=1 || isCpp=0
 cppInclude=1
+cppLink=1
 
 expandResponseParams "$@"
 declare -i n=0
@@ -37,7 +38,12 @@ nParams=${#params[@]}
 while (( "$n" < "$nParams" )); do
     p=${params[n]}
     p2=${params[n+1]:-} # handle `p` being last one
-    if [ "$p" = -c ]; then
+    if [ "${p:0:1}" != - ]; then
+        nonFlagArgs=1
+        if [[ "$p" = *.cc || "$p" = *.C || "$p" = *.cxx || "$p" = *.cpp || "$p" = *.ii ]]; then
+          isCpp=1
+        fi
+    elif [ "$p" = -c ]; then
         dontLink=1
     elif [ "$p" = -S ]; then
         dontLink=1
@@ -51,16 +57,14 @@ while (( "$n" < "$nParams" )); do
         dontLink=1
     elif [[ "$p" = -x && "$p2" = *-header ]]; then
         dontLink=1
-    elif [[ "$p" = -x && "$p2" = c++* && "$isCpp" = 0 ]]; then
+    elif [[ "$p" = -x && "$p2" = c++* ]]; then
         isCpp=1
     elif [ "$p" = -nostdlib ]; then
-        isCpp=-1
+        cppLink=0
     elif [ "$p" = -nostdinc ]; then
         cppInclude=0
     elif [ "$p" = -nostdinc++ ]; then
         cppInclude=0
-    elif [ "${p:0:1}" != - ]; then
-        nonFlagArgs=1
     fi
     n+=1
 done
@@ -121,7 +125,9 @@ if [[ "$isCpp" = 1 ]]; then
     if [[ "$cppInclude" = 1 ]]; then
         NIX_@infixSalt@_CFLAGS_COMPILE+=" ${NIX_@infixSalt@_CXXSTDLIB_COMPILE-@default_cxx_stdlib_compile@}"
     fi
-    NIX_@infixSalt@_CFLAGS_LINK+=" $NIX_@infixSalt@_CXXSTDLIB_LINK"
+    if [[ "$cppLink" = 1 ]]; then
+        NIX_@infixSalt@_CFLAGS_LINK+=" $NIX_@infixSalt@_CXXSTDLIB_LINK"
+    fi
 fi
 
 source @out@/nix-support/add-hardening.sh
