@@ -94,6 +94,10 @@ if [[ "${NIX_ENFORCE_PURITY:-}" = 1 && -n "$NIX_STORE" ]]; then
             skip "${p:2}"
         elif [ "$p" = -I ] && badPath "$p2"; then
             n+=1; skip "$p2"
+        elif [ "${p:0:3}" = -B/ ] && badPath "${p:2}"; then
+            skip "${p:2}"
+        elif [ "$p" = -B ] && badPath "$p2"; then
+            n+=1; skip "$p2"
         elif [ "$p" = -isystem ] && badPath "$p2"; then
             n+=1; skip "$p2"
         else
