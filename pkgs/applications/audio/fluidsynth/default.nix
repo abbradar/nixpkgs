@@ -1,6 +1,6 @@
 { stdenv, lib, fetchFromGitHub, pkgconfig, cmake
 , alsaLib, glib, libjack2, libsndfile, libpulseaudio
-, AudioUnit, CoreAudio, CoreMIDI, CoreServices
+, AudioUnit, CoreAudio, CoreMIDI, CoreServices, dbus
 }:
 
 stdenv.mkDerivation  rec {
@@ -17,7 +17,7 @@ stdenv.mkDerivation  rec {
   nativeBuildInputs = [ pkgconfig cmake ];
 
   buildInputs = [ glib libsndfile ]
-    ++ lib.optionals (!stdenv.isDarwin) [ alsaLib libpulseaudio libjack2 ]
+    ++ lib.optionals (!stdenv.isDarwin) [ alsaLib libpulseaudio libjack2 dbus ]
     ++ lib.optionals stdenv.isDarwin [ AudioUnit CoreAudio CoreMIDI CoreServices ];
 
   cmakeFlags = lib.optional stdenv.isDarwin "-Denable-framework=off";
