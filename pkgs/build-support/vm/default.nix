@@ -550,9 +550,9 @@ rec {
 
       for i in $out/$outDir/*.rpm; do
         header "Generated RPM/SRPM: $i"
-        rpm -qip $i
         stopNest
       done
+      rpm -qi $out/$outDir/*.rpm
 
       eval "$postInstall"
     ''; # */
