@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, fetchFromGitHub, perl, curl, bzip2, sqlite, openssl ? null, xz
+{ lib, stdenv, fetchurl, fetchFromGitHub, fetchpatch, perl, curl, bzip2, sqlite, openssl ? null, xz
 , pkgconfig, boehmgc, perlPackages, libsodium, aws-sdk-cpp, brotli
 , autoreconfHook, autoconf-archive, bison, flex, libxml2, libxslt, docbook5, docbook5_xsl
 , libseccomp, busybox-sandbox-shell
@@ -12,8 +12,8 @@ let
 
   sh = busybox-sandbox-shell;
 
-  common = { name, suffix ? "", src, fromGit ? false }: stdenv.mkDerivation rec {
-    inherit name src;
+  common = { name, suffix ? "", src, fromGit ? false, patches ? [] }: stdenv.mkDerivation rec {
+    inherit name src patches;
     version = lib.getVersion name;
 
     is20 = lib.versionAtLeast version "2.0pre";
@@ -146,6 +146,12 @@ in rec {
       rev = "a6c0b773b72d4e30690e01f1f1dcffc28f2d9ea1";
       sha256 = "0i8wcblcjw3291ba6ki4llw3fgm8ylp9q52kajkyr58dih537346";
     };
+    patches = [
+      (fetchpatch {
+        url = "https://patch-diff.githubusercontent.com/raw/NixOS/nix/pull/1643.patch";
+        sha256 = "09qmamh5a2gkf3xjf39wf2g7z9x954zqjvbj9v6vvwk9g76apz1q";
+      })
+    ];
     fromGit = true;
   })) // { perl-bindings = perl-bindings { nix = nixUnstable; }; };
 */
