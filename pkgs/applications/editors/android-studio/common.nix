@@ -29,6 +29,7 @@
 , writeTextFile
 , xkeyboard_config
 , zlib
+, gtk2, gnome_vfs, glib, GConf
 , fontsConf
 }:
 
@@ -95,7 +96,13 @@ let
           libpulseaudio
           libX11
 
+          # For GTKLookAndFeel
+          gtk2
+          gnome_vfs
+          glib
+          GConf
         ]}" \
+        --prefix _JAVA_OPTIONS " " "-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel" \
         --set QT_XKB_CONFIG_ROOT "${xkeyboard_config}/share/X11/xkb" \
         --set FONTCONFIG_FILE ${fontsConf}
     '';
