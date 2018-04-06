@@ -19719,6 +19719,8 @@ with pkgs;
 
   metis = callPackage ../development/libraries/science/math/metis {};
 
+  hypre = callPackage ../development/libraries/science/math/hypre { };
+
   nauty = callPackage ../applications/science/math/nauty {};
 
   petsc = callPackage ../development/libraries/science/math/petsc { };
