@@ -21380,6 +21380,8 @@ with pkgs;
 
   metis = callPackage ../development/libraries/science/math/metis {};
 
+  hypre = callPackage ../development/libraries/science/math/hypre { };
+
   nauty = callPackage ../applications/science/math/nauty {};
 
   or-tools = callPackage ../development/libraries/science/math/or-tools {};
