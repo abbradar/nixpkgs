@@ -18474,6 +18474,7 @@ with pkgs;
   };
 
   pcsx2 = pkgsi686Linux.callPackage ../misc/emulators/pcsx2 { };
+  pcsx2-git = callPackage ../misc/emulators/pcsx2/git.nix { };
 
   pekwm = callPackage ../applications/window-managers/pekwm { };
 

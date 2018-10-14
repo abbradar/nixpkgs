@@ -15,8 +15,8 @@ stdenv.mkDerivation rec {
                                                                                                                     
   src = fetchgit {                                                                                                  
     url = "https://github.com/RPCS3/rpcs3";                                                                         
-    rev = "81e5f3b7f299942f56bcfdde54edd09c722b32d8";                                                               
-    sha256 = "0czj6ga1nccqgcvi58sjnv1cc4k7qvwijp4warml463hpsmbd9r0";                                                
+    rev = "874d18f7611c71550e0f77d0d4611a7c0120062c";
+    sha256 = "1ghwhwkhrymlc6nrlmgqmix9vnag1cb01zz4amzih9j220bbh2i7";
   };                                                                                                                
                                                                                                                     
   preConfigure = ''                                                                                                 
