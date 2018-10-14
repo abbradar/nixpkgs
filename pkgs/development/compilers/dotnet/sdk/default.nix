@@ -6,10 +6,11 @@
 , libuuid
 , zlib
 , curl
+, lttng-ust
 }:
 
 let
-  rpath = stdenv.lib.makeLibraryPath [ stdenv.cc.cc libunwind libuuid icu openssl zlib curl ];
+  rpath = stdenv.lib.makeLibraryPath [ stdenv.cc.cc libunwind libuuid icu openssl zlib curl lttng-ust ];
 in
   stdenv.mkDerivation rec {
     version = "2.1.403";
@@ -44,6 +45,7 @@ in
       runHook preInstall
       mkdir -p $out/bin
       cp -r ./ $out
+      find $out -type f -name "*.so" -execdir sh -c 'patchelf --set-rpath "$PWD:${rpath}" {}' \;
       ln -s $out/dotnet $out/bin/dotnet
       runHook postInstall
     '';
