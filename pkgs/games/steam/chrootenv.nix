@@ -3,6 +3,7 @@
 , withJava ? false
 , withPrimus ? false
 , extraPkgs ? pkgs: [ ] # extra packages to add to targetPkgs
+, extraLibraries ? pkgs: [ ] # extra packages to add to multiPkgs
 , extraProfile ? "" # string to append to profile
 , nativeOnly ? false
 , runtimeOnly ? false
@@ -156,7 +157,7 @@ in buildFHSUserEnv rec {
     librsvg
     xorg.libXft
     libvdpau
-  ] ++ steamPackages.steam-runtime-wrapped.overridePkgs);
+  ] ++ steamPackages.steam-runtime-wrapped.overridePkgs) ++ extraLibraries pkgs;
 
   extraBuildCommands = if (!nativeOnly) then ''
     mkdir -p steamrt
