@@ -7,7 +7,7 @@
                                                                                                                     
 let                                                                                                                 
   majorVersion = "0.0.5";                                                                                           
-  gitVersion = "6980-81e5f3b7f"; # echo $(git rev-list HEAD --count)-$(git rev-parse --short HEAD)                  
+  gitVersion = "7439-4ab777b42";
 in                                                                                                                  
 stdenv.mkDerivation rec {                                                                                           
   name = "rpcs3-${version}";                                                                                        
@@ -15,8 +15,8 @@ stdenv.mkDerivation rec {
                                                                                                                     
   src = fetchgit {                                                                                                  
     url = "https://github.com/RPCS3/rpcs3";                                                                         
-    rev = "874d18f7611c71550e0f77d0d4611a7c0120062c";
-    sha256 = "1ghwhwkhrymlc6nrlmgqmix9vnag1cb01zz4amzih9j220bbh2i7";
+    rev = "4ab777b429b3a659be33e8a21b6a446c1cad2780";
+    sha256 = "1dcrhflc3g77kjkhdn944h2lnwfjbw21dvq2klfaazbw9h9kb0ci";
   };                                                                                                                
                                                                                                                     
   preConfigure = ''                                                                                                 
