@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchFromGitHub, fetchpatch, autoreconfHook, python2, pkgconfig, libX11, libXext, xorgproto }:
+{ stdenv, lib, fetchFromGitHub, fetchpatch, autoreconfHook, python2, pkgconfig, libX11, libXext, xorgproto, patchelf }:
 
 let
   driverLink = "/run/opengl-driver" + lib.optionalString stdenv.isi686 "-32";
@@ -13,7 +13,7 @@ in stdenv.mkDerivation rec {
     sha256 = "1a126lzhd2f04zr3rvdl6814lfl0j077spi5dsf2alghgykn5iif";
   };
 
-  nativeBuildInputs = [ autoreconfHook pkgconfig python2 ];
+  nativeBuildInputs = [ autoreconfHook pkgconfig python2 patchelf ];
   buildInputs = [ libX11 libXext xorgproto ];
 
   postPatch = lib.optionalString stdenv.isDarwin ''
@@ -44,6 +44,20 @@ in stdenv.mkDerivation rec {
       sha256 = "01339wg27cypv93221rhk3885vxbsg8kvbfyia77jmjdcnwrdwm2";
     });
   outputs = [ "out" "dev" ];
+
+  # Set RUNPATH so that driver libraries in /run/opengl-driver(-32)/lib can be found.
+  # This is needed to not rely on LD_LIBRARY_PATH which does not work with setuid
+  # executables. Fixes https://github.com/NixOS/nixpkgs/issues/22760. It must be
+  # in postFixup because RUNPATH stripping in fixup would undo it. Note that patchelf
+  # actually sets RUNPATH not RPATH, which applies only to dependencies of the binary
+  # it set on (including for dlopen), so the RUNPATH must indeed be set on these
+  # libraries and would not work if set only on executables.
+  postFixup = ''
+    for library in $out/lib/libGLX.so $out/lib/libEGL.so; do
+      origRpath=$(patchelf --print-rpath "$library")
+      patchelf --set-rpath "$origRpath:${driverLink}/lib" "$library"
+    done
+  '';
 
   passthru = { inherit driverLink; };
 
