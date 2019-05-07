@@ -7,6 +7,8 @@
 , lib
 , cudatoolkit
 , fetchurl
+, patchelf
+, libGL_driver
 }:
 
 stdenv.mkDerivation rec {
@@ -19,6 +21,8 @@ stdenv.mkDerivation rec {
     inherit sha256;
   };
 
+  nativeBuildInputs = [ patchelf ];
+
   installPhase = ''
     function fixRunPath {
       p=$(patchelf --print-rpath $1)
@@ -29,6 +33,15 @@ stdenv.mkDerivation rec {
     mkdir -p $out
     cp -a include $out/include
     cp -a lib64 $out/lib64
+  '';
+
+  # Set RUNPATH so that libcuda in /run/opengl-driver(-32)/lib can be found.
+  # See the explanation in libglvnd. 
+  postFixup = ''
+    for library in $out/lib/lib*.so; do
+      origRpath=$(patchelf --print-rpath "$library")
+      patchelf --set-rpath "$origRpath:${libGL_driver.driverLink}/lib" "$library"
+    done
   '';
 
   propagatedBuildInputs = [

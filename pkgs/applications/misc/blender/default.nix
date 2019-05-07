@@ -2,7 +2,7 @@
 , ilmbase, libXi, libX11, libXext, libXrender
 , libjpeg, libpng, libsamplerate, libsndfile
 , libtiff, libGLU_combined, openal, opencolorio, openexr, openimageio, openjpeg_1, pythonPackages
-, zlib, fftw, opensubdiv, freetype, jemalloc, ocl-icd
+, zlib, fftw, opensubdiv, freetype, jemalloc, ocl-icd, patchelf, libGL_driver
 , jackaudioSupport ? false, libjack2
 , cudaSupport ? config.cudaSupport or false, cudatoolkit
 , colladaSupport ? true, opencollada
@@ -21,8 +21,9 @@ stdenv.mkDerivation rec {
     sha256 = "1g4kcdqmf67srzhi3hkdnr4z1ph4h9sza1pahz38mrj998q4r52c";
   };
 
+  nativeBuildInputs = [ patchelf cmake ];
   buildInputs =
-    [ boost cmake ffmpeg gettext glew ilmbase
+    [ boost ffmpeg gettext glew ilmbase
       libXi libX11 libXext libXrender
       freetype libjpeg libpng libsamplerate libsndfile libtiff libGLU_combined openal
       opencolorio openexr openimageio openjpeg_1 python zlib fftw jemalloc
@@ -79,6 +80,16 @@ stdenv.mkDerivation rec {
       wrapProgram $out/bin/blender \
         --prefix PYTHONPATH : ${pythonPackages.numpy}/${python.sitePackages}
     '';
+
+  # Set RUNPATH so that libcuda and libnvrtc in /run/opengl-driver(-32)/lib can be
+  # found. See the explanation in libglvnd.
+  postFixup = optionalString cudaSupport ''
+    for program in $out/bin/blender $out/bin/.blender-wrapped; do
+      isELF "$program" || continue
+      origRpath=$(patchelf --print-rpath "$program")
+      patchelf --set-rpath "$origRpath:${libGL_driver.driverLink}/lib" "$program"
+    done
+  '';
 
   meta = with stdenv.lib; {
     description = "3D Creation/Animation/Publishing System";
