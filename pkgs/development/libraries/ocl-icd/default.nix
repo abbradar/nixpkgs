@@ -1,4 +1,4 @@
-{stdenv, fetchurl, ruby, opencl-headers, libGL_driver, patchelf }:
+{stdenv, fetchurl, ruby, opencl-headers, addOpenGLRunpath }:
 
 stdenv.mkDerivation rec {
   name = "ocl-icd-${version}";
@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     sha256 = "0f14gpa13sdm0kzqv5yycp4pschbmi6n5fj7wl4ilspzsrqcgqr2";
   };
 
-  nativeBuildInputs = [ ruby patchelf ];
+  nativeBuildInputs = [ ruby addOpenGLRunpath ];
 
   buildInputs = [ opencl-headers ];
 
@@ -18,12 +18,9 @@ stdenv.mkDerivation rec {
   '';
 
   # Set RUNPATH so that driver libraries in /run/opengl-driver(-32)/lib can be found.
-  # See the explanation in libglvnd.
+  # See the explanation in addOpenGLRunpath.
   postFixup = ''
-    for library in $out/lib/libOpenCL.so; do
-      origRpath=$(patchelf --print-rpath "$library")
-      patchelf --set-rpath "$origRpath:${libGL_driver.driverLink}/lib" "$library"
-    done
+    addOpenGLRunpath $out/lib/libOpenCL.so
   '';
 
   meta = with stdenv.lib; {

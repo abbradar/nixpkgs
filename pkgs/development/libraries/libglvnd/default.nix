@@ -1,8 +1,6 @@
-{ stdenv, lib, fetchFromGitHub, fetchpatch, autoreconfHook, python2, pkgconfig, libX11, libXext, xorgproto, patchelf }:
+{ stdenv, lib, fetchFromGitHub, fetchpatch, autoreconfHook, python2, pkgconfig, libX11, libXext, xorgproto, addOpenGLRunpath }:
 
-let
-  driverLink = "/run/opengl-driver" + lib.optionalString stdenv.isi686 "-32";
-in stdenv.mkDerivation rec {
+stdenv.mkDerivation rec {
   name = "libglvnd-${version}";
   version = "1.0.0";
 
@@ -13,7 +11,7 @@ in stdenv.mkDerivation rec {
     sha256 = "1a126lzhd2f04zr3rvdl6814lfl0j077spi5dsf2alghgykn5iif";
   };
 
-  nativeBuildInputs = [ autoreconfHook pkgconfig python2 patchelf ];
+  nativeBuildInputs = [ autoreconfHook pkgconfig python2 addOpenGLRunpath ];
   buildInputs = [ libX11 libXext xorgproto ];
 
   postPatch = lib.optionalString stdenv.isDarwin ''
@@ -26,7 +24,7 @@ in stdenv.mkDerivation rec {
   NIX_CFLAGS_COMPILE = [
     "-UDEFAULT_EGL_VENDOR_CONFIG_DIRS"
     # FHS paths are added so that non-NixOS applications can find vendor files.
-    "-DDEFAULT_EGL_VENDOR_CONFIG_DIRS=\"${driverLink}/share/glvnd/egl_vendor.d:/etc/glvnd/egl_vendor.d:/usr/share/glvnd/egl_vendor.d\""
+    "-DDEFAULT_EGL_VENDOR_CONFIG_DIRS=\"${addOpenGLRunpath.driverLink}/share/glvnd/egl_vendor.d:/etc/glvnd/egl_vendor.d:/usr/share/glvnd/egl_vendor.d\""
   ] ++ lib.optional stdenv.cc.isClang "-Wno-error";
 
   # Indirectly: https://bugs.freedesktop.org/show_bug.cgi?id=35268
@@ -46,20 +44,12 @@ in stdenv.mkDerivation rec {
   outputs = [ "out" "dev" ];
 
   # Set RUNPATH so that driver libraries in /run/opengl-driver(-32)/lib can be found.
-  # This is needed to not rely on LD_LIBRARY_PATH which does not work with setuid
-  # executables. Fixes https://github.com/NixOS/nixpkgs/issues/22760. It must be
-  # in postFixup because RUNPATH stripping in fixup would undo it. Note that patchelf
-  # actually sets RUNPATH not RPATH, which applies only to dependencies of the binary
-  # it set on (including for dlopen), so the RUNPATH must indeed be set on these
-  # libraries and would not work if set only on executables.
+  # See the explanation in addOpenGLRunpath.
   postFixup = ''
-    for library in $out/lib/libGLX.so $out/lib/libEGL.so; do
-      origRpath=$(patchelf --print-rpath "$library")
-      patchelf --set-rpath "$origRpath:${driverLink}/lib" "$library"
-    done
+    addOpenGLRunpath $out/lib/libGLX.so $out/lib/libEGL.so
   '';
 
-  passthru = { inherit driverLink; };
+  passthru = { inherit (addOpenGLRunpath) driverLink; };
 
   meta = with stdenv.lib; {
     description = "The GL Vendor-Neutral Dispatch library";
