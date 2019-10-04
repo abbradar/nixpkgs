@@ -25285,6 +25285,8 @@ in
 
   pong3d = callPackage ../games/pong3d { };
 
+  ponscripter-wh = callPackage ../games/ponscripter-wh { };
+
   pokerth = libsForQt5.callPackage ../games/pokerth { };
 
   pokerth-server = libsForQt5.callPackage ../games/pokerth { target = "server"; };
