@@ -19674,6 +19674,8 @@ in
 
   aqemu = libsForQt5.callPackage ../applications/virtualization/aqemu { };
 
+  arc_unpacker = callPackage ../applications/misc/arc_unpacker { };
+
   ardour = callPackage ../applications/audio/ardour { };
 
   ardour_5 = lowPrio (callPackage ../applications/audio/ardour/5.nix { });
