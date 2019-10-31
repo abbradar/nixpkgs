@@ -1,5 +1,8 @@
 project('chrootenv', 'c')
 
-glib = dependency('glib-2.0')
+cc = meson.get_compiler('c')
 
-executable('chrootenv', 'chrootenv.c', dependencies: [glib], install: true)
+glib = dependency('glib-2.0')
+cap = cc.find_library('cap')
+
+executable('chrootenv', 'chrootenv.c', dependencies: [glib, cap], install: true)

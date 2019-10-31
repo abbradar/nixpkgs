@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/syscall.h>
+#include <sys/capability.h>
 
 #define fail(s, err) g_error("%s: %s: %s", __func__, s, g_strerror(err))
 #define fail_if(expr)                                                          \
@@ -19,6 +20,18 @@
     fail(#expr, errno);
 
 const gchar *bind_blacklist[] = {"bin", "etc", "host", "real-host", "usr", "lib", "lib64", "lib32", "sbin", NULL};
+
+gboolean check_if_admin() {
+  cap_flag_value_t result;
+  cap_t caps = cap_get_proc();
+  if (caps == NULL) {
+    fail("cap_get_proc", errno);
+  }
+  fail_if(cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE, &result));
+  fail_if(cap_free(caps));
+
+  return result;
+}
 
 int pivot_root(const char *new_root, const char *put_old) {
   return syscall(SYS_pivot_root, new_root, put_old);
@@ -104,8 +117,10 @@ int main(gint argc, gchar **argv) {
   else if (cpid == 0) {
     uid_t uid = getuid();
     gid_t gid = getgid();
+    gboolean is_admin = check_if_admin();
+    int clone_flags = is_admin ? CLONE_NEWNS : CLONE_NEWNS | CLONE_NEWUSER;
 
-    if (unshare(CLONE_NEWNS | CLONE_NEWUSER) < 0) {
+    if (unshare(clone_flags) < 0) {
       int unshare_errno = errno;
 
       g_message("Requires Linux version >= 3.19 built with CONFIG_USER_NS");
@@ -116,9 +131,13 @@ int main(gint argc, gchar **argv) {
       fail("unshare", unshare_errno);
     }
 
-    spit("/proc/self/setgroups", "deny");
-    spit("/proc/self/uid_map", "%d %d 1", uid, uid);
-    spit("/proc/self/gid_map", "%d %d 1", gid, gid);
+    if (is_admin) {
+      fail_if(mount(NULL, "/", NULL, MS_REC | MS_SLAVE, NULL));
+    } else {
+      spit("/proc/self/setgroups", "deny");
+      spit("/proc/self/uid_map", "%d %d 1", uid, uid);
+      spit("/proc/self/gid_map", "%d %d 1", gid, gid);
+    }
 
     // If there is a /host directory, assume this is nested chrootenv and use it as host instead.
     gboolean nested_host = g_file_test("/host", G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR);
