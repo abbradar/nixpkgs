@@ -210,6 +210,7 @@ let
                       echo "'ip addr add "${cidr}" dev "${i.name}"' failed: $out"
                       exit 1
                     fi
+                    sleep 1;
                   ''
                 )}
 
