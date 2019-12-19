@@ -53,6 +53,9 @@ let
     # Eval-time filesystem handling
     filesystem = callLibs ./filesystem.nix;
 
+    # TOML
+    toml = callLibs ./toml.nix;
+
     # back-compat aliases
     platforms = systems.doubles;
 
@@ -143,6 +146,8 @@ let
       mergeAttrsByFuncDefaultsClean mergeAttrBy
       fakeHash fakeSha256 fakeSha512
       nixType imap;
+    inherit (toml)
+      toTOML;
     inherit (versions)
       splitVersion;
   });
