@@ -324,7 +324,7 @@ rec {
       name = "attrs";
       description = "attribute set";
       check = isAttrs;
-      merge = loc: foldl' (res: def: res // def.value) {};
+      merge = mergeAttrSetOptions;
       emptyValue = { value = {}; };
     };
 
