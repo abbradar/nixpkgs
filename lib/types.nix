@@ -48,6 +48,7 @@ let
     mergeDefaultOption
     mergeEqualOption
     mergeOneOption
+    mergeAttrSetOptions
     showFiles
     showOption
     ;

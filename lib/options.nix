@@ -26,6 +26,7 @@ let
     ;
   inherit (lib.attrsets)
     optionalAttrs
+    recursiveUpdateUntil
     ;
   inherit (lib.strings)
     concatMapStrings
