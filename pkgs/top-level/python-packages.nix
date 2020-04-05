@@ -5522,6 +5522,8 @@ in {
 
   typing-extensions = callPackage ../development/python-modules/typing-extensions { };
 
+  typing-inspect = callPackage ../development/python-modules/typing-inspect { };
+
   typeguard = callPackage ../development/python-modules/typeguard { };
 
   typesentry = callPackage ../development/python-modules/typesentry { };
