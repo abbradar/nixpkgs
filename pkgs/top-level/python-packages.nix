@@ -1975,6 +1975,8 @@ in {
 
   dataclasses = callPackage ../development/python-modules/dataclasses { };
 
+  dataclasses-json = callPackage ../development/python-modules/dataclasses-json { };
+
   debian = callPackage ../development/python-modules/debian {};
 
   defusedxml = callPackage ../development/python-modules/defusedxml {};
