@@ -223,7 +223,7 @@ in {
     };
 
     services.uwsgi.package = pkgs.uwsgi.override {
-      inherit (cfg) plugins;
+      plugins = unique cfg.plugins;
     };
   };
 }
