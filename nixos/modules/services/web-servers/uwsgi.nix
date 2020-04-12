@@ -143,6 +143,7 @@ in {
 
       plugins = mkOption {
         type = types.listOf types.str;
+        apply = unique;
         default = [];
         description = "Plugins used with uWSGI";
       };
