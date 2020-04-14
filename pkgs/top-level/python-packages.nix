@@ -4486,6 +4486,8 @@ in {
 
   nbconflux = callPackage ../development/python-modules/nbconflux { };
 
+  flask-accept = callPackage ../development/python-modules/flask-accept { };
+
   nbconvert = callPackage ../development/python-modules/nbconvert { };
 
   nbdime = callPackage ../development/python-modules/nbdime { };
