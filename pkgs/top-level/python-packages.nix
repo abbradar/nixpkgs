@@ -7144,6 +7144,8 @@ in {
 
   repoze_who = callPackage ../development/python-modules/repoze_who { };
 
+  represent = callPackage ../development/python-modules/represent { };
+
   reproject = callPackage ../development/python-modules/reproject { };
 
   requests-aws4auth = callPackage ../development/python-modules/requests-aws4auth { };
