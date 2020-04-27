@@ -7374,6 +7374,8 @@ in {
 
   sanic = callPackage ../development/python-modules/sanic { };
 
+  sanic-wtf = callPackage ../development/python-modules/sanic-wtf { };
+
   sapi-python-client = callPackage ../development/python-modules/sapi-python-client { };
 
   sarge = callPackage ../development/python-modules/sarge { };
