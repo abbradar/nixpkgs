@@ -7376,6 +7376,8 @@ in {
 
   sanic-cors = callPackage ../development/python-modules/sanic-cors { };
 
+  sanic-plugins-framework = callPackage ../development/python-modules/sanic-plugins-framework { };
+
   sanic-wtf = callPackage ../development/python-modules/sanic-wtf { };
 
   sapi-python-client = callPackage ../development/python-modules/sapi-python-client { };
