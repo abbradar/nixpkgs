@@ -18523,7 +18523,7 @@ in
 
   sassc = callPackage ../development/tools/sassc { };
 
-  scanmem = callPackage ../tools/misc/scanmem { };
+  scanmem = python3.pkgs.callPackage ../tools/misc/scanmem { };
 
   schedtool = callPackage ../os-specific/linux/schedtool { };
 
