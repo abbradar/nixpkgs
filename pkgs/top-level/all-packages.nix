@@ -15229,6 +15229,8 @@ in
 
   libsmf = callPackage ../development/libraries/audio/libsmf { };
 
+  lightgbm = callPackage ../development/libraries/lightgbm { };
+
   lilv = callPackage ../development/libraries/audio/lilv { };
 
   lv2 = callPackage ../development/libraries/audio/lv2 { };
