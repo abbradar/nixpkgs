@@ -270,6 +270,8 @@ in {
 
   aiohttp-remotes = callPackage ../development/python-modules/aiohttp-remotes { };
 
+  aiohttp-session = callPackage ../development/python-modules/aiohttp-session { };
+
   aiohttp-socks = callPackage ../development/python-modules/aiohttp-socks { };
 
   aiohttp-swagger = callPackage ../development/python-modules/aiohttp-swagger { };
