@@ -6348,6 +6348,8 @@ in {
 
   pytabix = callPackage ../development/python-modules/pytabix { };
 
+  pymp4 = callPackage ../development/python-modules/pymp4 { };
+
   pytado = callPackage ../development/python-modules/pytado { };
 
   pytaglib = callPackage ../development/python-modules/pytaglib { };
