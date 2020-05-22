@@ -4295,6 +4295,8 @@ in {
   # Needed here because moinmoin is loaded as a Python library.
   moinmoin = callPackage ../development/python-modules/moinmoin { };
 
+  motor = callPackage ../development/python-modules/motor { };
+
   mongodict = callPackage ../development/python-modules/mongodict { };
 
   mongoengine = callPackage ../development/python-modules/mongoengine { };
