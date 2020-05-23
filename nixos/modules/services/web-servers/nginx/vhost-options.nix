@@ -139,7 +139,7 @@ with lib;
 
     http2 = mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       description = ''
         Whether to enable HTTP 2.
         Note that (as of writing) due to nginx's implementation, to disable
