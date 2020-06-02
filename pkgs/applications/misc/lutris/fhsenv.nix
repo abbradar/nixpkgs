@@ -81,7 +81,7 @@ in buildFHSUserEnv {
     bison flex
 
     # WINE
-    xorg.xrandr perl which p7zip gnused gnugrep psmisc opencl-headers
+    xorg.xrandr perl which gnused gnugrep psmisc opencl-headers
 
     # ZDOOM
     soundfont-fluid bzip2 game-music-emu

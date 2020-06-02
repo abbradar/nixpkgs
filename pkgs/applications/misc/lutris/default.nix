@@ -50,7 +50,6 @@ let
     vulkan-tools
     xboxdrv
     pulseaudio
-    p7zip
     xgamma
     libstrangle
     wine
