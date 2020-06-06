@@ -6601,6 +6601,8 @@ in {
 
   python-bidi = callPackage ../development/python-modules/python-bidi { };
 
+  python-barcode = callPackage ../development/python-modules/python-barcode { };
+
   python-binance = callPackage ../development/python-modules/python-binance { };
 
   python-constraint = callPackage ../development/python-modules/python-constraint { };
