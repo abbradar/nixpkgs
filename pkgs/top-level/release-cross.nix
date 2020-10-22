@@ -2,7 +2,7 @@
 */
 
 { # The platforms *from* which we cross compile.
-  supportedSystems ? [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" ]
+  supportedSystems ? [ "i686-linux" "x86_64-linux" "x86_64-darwin" "aarch64-linux" ]
 , # Strip most of attributes when evaluating to spare memory usage
   scrubJobs ? true
 , # Attributes passed to nixpkgs. Don't build packages marked as unfree.
@@ -148,6 +148,7 @@ in
 
   aarch64-musl = mapTestOnCross lib.systems.examples.aarch64-multiplatform-musl linuxCommon;
 
+  i686-musl = mapTestOnCross lib.systems.examples.musl32 linuxCommon;
   x86_64-musl = mapTestOnCross lib.systems.examples.musl64 linuxCommon;
 
   android64 = mapTestOnCross lib.systems.examples.aarch64-android-prebuilt linuxCommon;

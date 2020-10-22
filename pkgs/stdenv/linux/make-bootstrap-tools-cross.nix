@@ -13,6 +13,7 @@ in lib.mapAttrs (n: make) (with lib.systems.examples; {
   armv6l     = raspberryPi;
   armv7l     = armv7l-hf-multiplatform;
   aarch64    = aarch64-multiplatform;
+  i686-musl    = musl32;
   x86_64-musl  = musl64;
   armv6l-musl  = muslpi;
   aarch64-musl = aarch64-multiplatform-musl;
