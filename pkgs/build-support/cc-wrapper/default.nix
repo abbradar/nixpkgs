@@ -442,7 +442,7 @@ stdenv.mkDerivation {
       hardening_unsupported_flags+=" format"
     '' + optionalString targetPlatform.isWasm ''
       hardening_unsupported_flags+=" stackprotector fortify pie pic"
-    '' + optionalString (targetPlatform.isMusl && targetPlatform.isi686) ''
+    '' + optionalString (hostPlatform.isMusl && hostPlatform.isi686 || targetPlatform.isMusl && targetPlatform.isi686) ''
       hardening_unsupported_flags+=" stackprotector"
     ''
 
