@@ -33,6 +33,8 @@ let
 
     disallowedReferences = [ stdenv.cc ];
 
+    NIX_LDFLAGS = if stdenv.targetPlatform.isMusl && stdenv.targetPlatform.isi686 then "-lssp_nonshared" else null;
+
     patches =
       [
         # Do not look in /usr etc. for dependencies.

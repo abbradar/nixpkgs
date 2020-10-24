@@ -33,6 +33,8 @@ stdenv.mkDerivation {
   NATIVE_TOOLS_CFLAGS = if crossBuildTools then "-I${getDev buildPackages.ncurses}/include" else null;
   NATIVE_TOOLS_LDFLAGS = if crossBuildTools then "-L${getLib buildPackages.ncurses}/lib" else null;
 
+  NIX_LDFLAGS = if stdenv.targetPlatform.isMusl && stdenv.targetPlatform.isi686 then "-lssp_nonshared" else null;
+
   # We need a native compiler to build perl XS extensions
   # when cross-compiling.
   depsBuildBuild = [ buildPackages.stdenv.cc perl ];
