@@ -114,7 +114,7 @@ let
     ++ lib.optional (libelf != null) "--with-libelf=${libelf}"
     ++ lib.optional (!(crossMingw && crossStageStatic))
       "--with-native-system-header-dir=${lib.getDev stdenv.cc.libc}/include"
-
+    ++ lib.optional (targetPlatform.isi686 && targetPlatform.isMusl) "--disable-libmpx"
     # Basic configuration
     ++ [
       (lib.enableFeature enableLTO "lto")
