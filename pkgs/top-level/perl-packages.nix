@@ -13582,6 +13582,23 @@ let
     };
   };
 
+  MojoliciousPluginModel = buildPerlModule {
+    pname = "Mojolicious-Plugin-Model";
+    version = "0.11";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/A/AV/AVKHOZOV/Mojolicious-Plugin-Model-0.11.tar.gz";
+      sha256 = "0592hb92ss9q9fhmh99hb6l9mhnxvnpz4p7vkr4fi85c98laaavf";
+    };
+    buildInputs = [ ModuleBuildTiny ];
+    propagatedBuildInputs = [ ScalarListUtils Mojolicious ];
+    meta = {
+      homepage = "https://github.com/avkhozov/Mojolicious-Plugin-Model";
+      description = "Model for Mojolicious applications";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
+      maintainers = [ maintainers.abbradar ];
+    };
+  };
+
   MojoliciousPluginOpenAPI = buildPerlPackage {
     pname = "Mojolicious-Plugin-OpenAPI";
     version = "4.00";
