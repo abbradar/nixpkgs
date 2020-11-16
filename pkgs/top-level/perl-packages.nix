@@ -15198,6 +15198,20 @@ let
     };
   };
 
+  NetDNSNative = buildPerlPackage {
+    pname = "Net-DNS-Native";
+    version = "0.22";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/O/OL/OLEG/Net-DNS-Native-0.22.tar.gz";
+      sha256 = "1m9hbj83ikg52wvq7z8bjm78i50qvqk5alh11mmazzxrpbnrv38h";
+    };
+    meta = {
+      homepage = "https://github.com/olegwtf/p5-Net-DNS-Native";
+      description = "Non-blocking system DNS resolver";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
   NetDNSResolverMock = buildPerlPackage {
      pname = "Net-DNS-Resolver-Mock";
      version = "1.20200215";
