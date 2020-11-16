@@ -18195,6 +18195,25 @@ let
     };
   };
 
+  SerealDclone = buildPerlPackage {
+    pname = "Sereal-Dclone";
+    version = "0.003";
+
+    propagatedBuildInputs = [ Sereal ];
+
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/D/DB/DBOOK/Sereal-Dclone-0.003.tar.gz";
+      sha256 = "0g60vf6rgzq2lz6y1ryw0sqbbmi6208m17fad359zbfvj9dd82rq";
+    };
+
+    meta = {
+      homepage = "https://github.com/Grinnz/Sereal-Dclone";
+      description = "Deep (recursive) cloning via Sereal";
+      license = with stdenv.lib.licenses; [ artistic2 ];
+      maintainers = [ maintainers.abbradar ];
+    };
+  };
+
   SerealDecoder = buildPerlPackage {
     pname = "Sereal-Decoder";
     version = "4.018";
