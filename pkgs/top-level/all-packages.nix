@@ -20486,6 +20486,8 @@ in
 
   wirelesstools = callPackage ../os-specific/linux/wireless-tools { };
 
+  wondershaper = callPackage ../os-specific/linux/wondershaper { };
+
   wooting-udev-rules = callPackage ../os-specific/linux/wooting-udev-rules { };
 
   wpa_supplicant = callPackage ../os-specific/linux/wpa_supplicant { };
