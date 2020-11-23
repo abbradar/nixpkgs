@@ -808,6 +808,20 @@ let
     };
   };
 
+  asterisk-perl = buildPerlPackage {
+    pname = "asterisk-perl";
+    version = "1.08";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/I/IT/ITCHARLIE/asterisk-perl-1.08.tar.gz";
+      hash = "sha256-KCMlDHU4/bTDSn0JnNU9y8GsfdwW8lKNnHqEufwo848=";
+    };
+    checkInputs = [ NetTelnet ];
+    meta = {
+      description = "Asterisk Perl Modules";
+      license = with stdenv.lib.licenses; [ artistic2 ];
+    };
+  };
+
   AsyncPing = buildPerlPackage {
     pname = "AsyncPing";
     version = "2016.1207";
