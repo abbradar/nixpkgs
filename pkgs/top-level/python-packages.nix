@@ -252,6 +252,8 @@ in {
 
   aioftp = callPackage ../development/python-modules/aioftp { };
 
+  aiogram = callPackage ../development/python-modules/aiogram { };
+
   aioguardian = callPackage ../development/python-modules/aioguardian { };
 
   aioh2 = callPackage ../development/python-modules/aioh2 { };
