@@ -382,13 +382,13 @@ let
           ${optionalString config.krb5.enable
               "account sufficient ${pam_krb5}/lib/security/pam_krb5.so"}
           ${optionalString cfg.googleOsLoginAccountVerification ''
-            account [success=ok ignore=ignore default=die] ${pkgs.google-compute-engine-oslogin}/lib/pam_oslogin_login.so
-            account [success=ok default=ignore] ${pkgs.google-compute-engine-oslogin}/lib/pam_oslogin_admin.so
+            account [success=ok ignore=ignore default=die] ${pkgs.google-guest-oslogin}/lib/security/pam_oslogin_login.so
+            account [success=ok default=ignore] ${pkgs.google-guest-oslogin}/lib/security/pam_oslogin_admin.so
           ''}
 
           # Authentication management.
           ${optionalString cfg.googleOsLoginAuthentication
-              "auth [success=done perm_denied=bad default=ignore] ${pkgs.google-compute-engine-oslogin}/lib/pam_oslogin_login.so"}
+              "auth [success=done perm_denied=bad default=ignore] ${pkgs.google-guest-oslogin}/lib/security/pam_oslogin_login.so"}
           ${optionalString cfg.rootOK
               "auth sufficient pam_rootok.so"}
           ${optionalString cfg.requireWheel

@@ -5,7 +5,7 @@ with lib;
 let
 
   cfg = config.security.googleOsLogin;
-  package = pkgs.google-compute-engine-oslogin;
+  package = pkgs.google-guest-oslogin;
 
 in
 
@@ -46,6 +46,9 @@ in
       "d /run/google-sudoers.d 750 root root -"
       "d /var/google-users.d 750 root root -"
     ];
+
+    systemd.packages = [ package ];
+    systemd.timers.google-oslogin-cache.wantedBy = [ "timers.target" ];
 
     # enable the nss module, so user lookups etc. work
     system.nssModules = [ package ];
