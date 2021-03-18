@@ -4898,6 +4898,8 @@ in
 
   google-guest-agent = callPackage ../tools/virtualization/google-guest-agent { };
 
+  google-guest-configs = callPackage ../tools/virtualization/google-guest-configs { };
+
   gdown = with python3Packages; toPythonApplication gdown;
 
   gopro = callPackage ../tools/video/gopro { };
