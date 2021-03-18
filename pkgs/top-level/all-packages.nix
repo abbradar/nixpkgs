@@ -4900,6 +4900,8 @@ in
 
   google-guest-configs = callPackage ../tools/virtualization/google-guest-configs { };
 
+  google-guest-oslogin = callPackage ../tools/virtualization/google-guest-oslogin { };
+
   gdown = with python3Packages; toPythonApplication gdown;
 
   gopro = callPackage ../tools/video/gopro { };
