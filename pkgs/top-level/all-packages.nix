@@ -4896,6 +4896,8 @@ in
 
   google-cloud-cpp = callPackage ../development/libraries/google-cloud-cpp { };
 
+  google-guest-agent = callPackage ../tools/virtualization/google-guest-agent { };
+
   gdown = with python3Packages; toPythonApplication gdown;
 
   gopro = callPackage ../tools/video/gopro { };
