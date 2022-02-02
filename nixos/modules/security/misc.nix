@@ -134,7 +134,9 @@ with lib;
     })
 
     (mkIf (config.security.virtualisation.flushL1DataCache != null) {
-      boot.kernelParams = [ "kvm-intel.vmentry_l1d_flush=${config.security.virtualisation.flushL1DataCache}" ];
+      boot.extraModprobeConfig = ''
+        options kvm-intel vmentry_l1d_flush=${config.security.virtualisation.flushL1DataCache}
+      '';
     })
   ];
 }

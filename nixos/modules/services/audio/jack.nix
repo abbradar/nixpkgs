@@ -143,7 +143,9 @@ in {
 
     (mkIf loopback {
       boot.kernelModules = [ "snd-aloop" ];
-      boot.kernelParams = [ "snd-aloop.index=${toString cfg.loopback.index}" ];
+      boot.extraModprobeConfig = ''
+        options snd-aloop index=${toString cfg.loopback.index}
+      '';
       sound.extraConfig = cfg.loopback.config;
     })
 

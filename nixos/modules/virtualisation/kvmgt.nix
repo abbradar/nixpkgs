@@ -49,7 +49,9 @@ in {
     };
 
     boot.kernelModules = [ "kvmgt" ];
-    boot.kernelParams = [ "i915.enable_gvt=1" ];
+    boot.extraModprobeConfig = ''
+      options i915 enable_gvt=1
+    '';
 
     services.udev.extraRules = ''
       SUBSYSTEM=="vfio", OWNER="root", GROUP="kvm"
