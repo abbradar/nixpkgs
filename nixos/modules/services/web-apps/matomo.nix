@@ -215,10 +215,14 @@ in
       '';
       script = ''
         # Use User-Private Group scheme to protect Matomo data, but allow administration / backup via 'matomo' group
-        # Copy config folder
         chmod g+s "${dataDir}"
+        # Copy config folder
         cp -r "${cfg.package}/share/matomo/config" "${dataDir}/"
+        # For GeoIP
         mkdir -p "${dataDir}/misc"
+        # https://github.com/matomo-org/matomo/issues/18785
+        mkdir -p "${dataDir}/tmp/latest"
+
         chmod -R u+rwX,g+rwX,o-rwx "${dataDir}"
 
         # check whether user setup has already been done
