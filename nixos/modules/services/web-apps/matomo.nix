@@ -222,6 +222,8 @@ in
       '';
       script = ''
         cp -r "${cfg.package}/share/matomo/config" "${dataDir}/"
+        # https://github.com/matomo-org/matomo/issues/18785
+        mkdir -p "${dataDir}/tmp/latest"
         chmod -R u+rwX,g+rwX,o-rwx "${dataDir}"
 
         # check whether user setup has already been done
