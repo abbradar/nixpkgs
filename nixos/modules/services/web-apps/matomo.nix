@@ -129,6 +129,23 @@ in
           If this is set to null (the default), no nginx virtualHost will be configured.
         '';
       };
+
+      database.createLocally = mkOption {
+        type = types.bool;
+        default = false;
+        example = true;
+        description = ''
+          Create local MariaDB database for Matomo.
+        '';
+      };
+
+      database.name = mkOption {
+        type = types.str;
+        default = "matomo";
+        description = ''
+          MariaDB database name for Matomo.
+        '';
+      };
     };
   };
 
@@ -345,6 +362,16 @@ in
             expires 1M;
           '';
         }
+      ];
+    };
+
+    services.mysql = mkIf cfg.database.createLocally {
+      enable = true;
+      package = mkDefault pkgs.mariadb;
+      settings.mysqld.max_allowed_packet = mkDefault "64M";
+      ensureDatabases = [ cfg.database.name ];
+      ensureUsers = [
+        { name = user; ensurePermissions = { "${cfg.database.name}.*" = "ALL PRIVILEGES"; }; }
       ];
     };
   };
