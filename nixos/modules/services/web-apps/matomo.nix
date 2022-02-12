@@ -221,7 +221,7 @@ in
         ln -sfT ${cfg.package} ${dataDir}/current-package
       '';
       script = ''
-        cp -r "${cfg.package}/share/config" "${dataDir}/"
+        cp -r "${cfg.package}/share/matomo/config" "${dataDir}/"
         chmod -R u+rwX,g+rwX,o-rwx "${dataDir}"
 
         # check whether user setup has already been done
@@ -318,7 +318,7 @@ in
         {
           # don't allow to override the root easily, as it will almost certainly break Matomo.
           # disadvantage: not shown as default in docs.
-          root = mkForce "${cfg.package}/share";
+          root = mkForce "${cfg.package}/share/matomo";
 
           # define locations here instead of as the submodule option's default
           # so that they can easily be extended with additional locations if required
