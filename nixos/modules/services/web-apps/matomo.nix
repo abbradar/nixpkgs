@@ -100,13 +100,13 @@ in {
           }
         '';
         description = ''
-            With this option, you can customize an nginx virtualHost which already has sensible defaults for Matomo.
-            Either this option or the webServerUser option is mandatory.
-            Set this to {} to just enable the virtualHost if you don't need any customization.
-            If enabled, then by default, the {option}`serverName` is
-            `''${user}.''${config.networking.hostName}.''${config.networking.domain}`,
-            SSL is active, and certificates are acquired via ACME.
-            If this is set to null (the default), no nginx virtualHost will be configured.
+          With this option, you can customize an nginx virtualHost which already has sensible defaults for Matomo.
+          Either this option or the webServerUser option is mandatory.
+          Set this to {} to just enable the virtualHost if you don't need any customization.
+          If enabled, then by default, the {option}`serverName` is
+          `''${user}.''${config.networking.hostName}.''${config.networking.domain}`,
+          SSL is active, and certificates are acquired via ACME.
+          If this is set to null (the default), no nginx virtualHost will be configured.
         '';
       };
     };
@@ -173,23 +173,23 @@ in {
           rm -rf ${dataDir}/tmp
         fi
         ln -sfT ${cfg.package} ${dataDir}/current-package
-        '';
+      '';
       script = ''
-            # Use User-Private Group scheme to protect Matomo data, but allow administration / backup via 'matomo' group
-            # Copy config folder
-            chmod g+s "${dataDir}"
-            cp -r "${cfg.package}/share/config" "${dataDir}/"
-            mkdir -p "${dataDir}/misc"
-            chmod -R u+rwX,g+rwX,o-rwx "${dataDir}"
+        # Use User-Private Group scheme to protect Matomo data, but allow administration / backup via 'matomo' group
+        # Copy config folder
+        chmod g+s "${dataDir}"
+        cp -r "${cfg.package}/share/config" "${dataDir}/"
+        mkdir -p "${dataDir}/misc"
+        chmod -R u+rwX,g+rwX,o-rwx "${dataDir}"
 
-            # check whether user setup has already been done
-            if test -f "${dataDir}/config/config.ini.php" &&
-              # since matomo-5.2.0, the config.ini.php is already created at first
-              # installer page access https://github.com/matomo-org/matomo/issues/22932
-              grep -q -F "[database]" "${dataDir}/config/config.ini.php"; then
-              # then execute possibly pending database upgrade
-              matomo-console core:update --yes
-            fi
+        # check whether user setup has already been done
+        if test -f "${dataDir}/config/config.ini.php" &&
+          # since matomo-5.2.0, the config.ini.php is already created at first
+          # installer page access https://github.com/matomo-org/matomo/issues/22932
+          grep -q -F "[database]" "${dataDir}/config/config.ini.php"; then
+          # then execute possibly pending database upgrade
+          matomo-console core:update --yes
+        fi
       '';
     };
 
