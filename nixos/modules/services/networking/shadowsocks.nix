@@ -10,7 +10,6 @@ let
     server_port = cfg.port;
     method = cfg.encryptionMethod;
     mode = cfg.mode;
-    user = "nobody";
     fast_open = cfg.fastOpen;
   } // optionalAttrs (cfg.plugin != null) {
     plugin = cfg.plugin;
@@ -20,6 +19,13 @@ let
   } // cfg.extraConfig;
 
   configFile = pkgs.writeText "shadowsocks.json" (builtins.toJSON opts);
+
+  preScript = pkgs.writeScript "shadowsocks-pre-start" ''
+    #!${pkgs.stdenv.shell}
+    ${optionalString (cfg.passwordFile != null) ''
+      cat ${configFile} | jq --arg password "$(cat "${cfg.passwordFile}")" '. + { password: $password }' > /tmp/shadowsocks.json
+    ''}
+  '';
 
 in
 
@@ -146,13 +152,14 @@ in
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
       path = [ pkgs.shadowsocks-libev ] ++ optional (cfg.plugin != null) cfg.plugin ++ optional (cfg.passwordFile != null) pkgs.jq;
-      serviceConfig.PrivateTmp = true;
-      script = ''
-        ${optionalString (cfg.passwordFile != null) ''
-          cat ${configFile} | jq --arg password "$(cat "${cfg.passwordFile}")" '. + { password: $password }' > /tmp/shadowsocks.json
-        ''}
-        exec ss-server -c ${if cfg.passwordFile != null then "/tmp/shadowsocks.json" else configFile}
-      '';
+      serviceConfig = {
+        DynamicUser = true;
+        User = "shadowsocks";
+        Group = "shadowsocks";
+        PrivateTmp = true;
+        ExecStartPre = "!${preScript}";
+        ExecStart = "${pkgs.shadowsocks-libev}/bin/ss-server -c ${if cfg.passwordFile != null then "/tmp/shadowsocks.json" else configFile}";
+      };
     };
   };
 }
