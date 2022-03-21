@@ -305,12 +305,15 @@ let
       terminal_output console
     }
 
-    ${lib.optionalString (config.isoImage.grubTheme != null) ''
-      hiddenentry 'GUI mode' --hotkey 'g' {
+    hiddenentry 'GUI mode' --hotkey 'g' {
+      ${if (config.isoImage.grubTheme != null) then ''
         $(find ${config.isoImage.grubTheme} -iname '*.pf2' -printf "loadfont (\$root)/EFI/BOOT/grub-theme/%P\n")
-        set textmode=false
-        terminal_output gfxterm
-      }
+      '' else ''
+        loadfont (\$root)/EFI/boot/unicode.pf2
+      ''}
+      set textmode=false
+      terminal_output gfxterm
+    }
     ''}
   '';
 
