@@ -3,7 +3,7 @@
 , fetchurl
 , pkg-config, meson, ninja, makeWrapper
 , libbsd, numactl, libbpf, zlib, libelf, jansson, openssl, libpcap, rdma-core
-, doxygen, python3, pciutils
+, doxygen, python3, iproute2, which, pciutils
 , withExamples ? []
 , shared ? false
 , machine ? (
@@ -36,13 +36,7 @@ in stdenv.mkDerivation rec {
     python3.pkgs.pyelftools
   ];
   buildInputs = [
-    jansson
     libbpf
-    libelf
-    libpcap
-    numactl
-    openssl.dev
-    zlib
     python3
   ] ++ lib.optionals mod kernel.moduleBuildDependencies;
 
@@ -52,6 +46,12 @@ in stdenv.mkDerivation rec {
     rdma-core
     # Requested by pkg-config.
     libbsd
+    libpcap
+    openssl
+    numactl
+    zlib
+    jansson
+    libelf
   ];
 
   postPatch = ''
@@ -79,7 +79,7 @@ in stdenv.mkDerivation rec {
     rm -rf $out/share/doc/dpdk/html/.doctrees
 
     wrapProgram $out/bin/dpdk-devbind.py \
-      --prefix PATH : "${lib.makeBinPath [ pciutils ]}"
+      --prefix PATH : "${lib.makeBinPath [ which iproute2 pciutils ]}"
   '' + lib.optionalString (withExamples != []) ''
     mkdir -p $examples/bin
     find examples -type f -executable -exec install {} $examples/bin \;
