@@ -12621,6 +12621,8 @@ with pkgs;
 
   sway-contrib = recurseIntoAttrs (callPackages ../applications/misc/sway-contrib { });
 
+  sysbox = callPackage ../applications/virtualization/sysbox { };
+
   i3 = callPackage ../applications/window-managers/i3 {
     xcb-util-cursor = if stdenv.hostPlatform.isDarwin then xcb-util-cursor-HEAD else xcb-util-cursor;
   };
