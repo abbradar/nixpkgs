@@ -1,0 +1,51 @@
+diff --git a/libcontainer/rootfs_init_linux.go b/libcontainer/rootfs_init_linux.go
+index 8a22ab65..64e57ce0 100644
+--- a/libcontainer/rootfs_init_linux.go
++++ b/libcontainer/rootfs_init_linux.go
+@@ -48,11 +48,7 @@ func getDir(file string) (string, error) {
+ func iptablesRestoreHasWait() (bool, error) {
+ 	var cmd *exec.Cmd
+ 
+-	if _, err := os.Stat("/usr/sbin/iptables"); os.IsNotExist(err) {
+-		cmd = exec.Command("/sbin/iptables", "--version")
+-	} else {
+-		cmd = exec.Command("/usr/sbin/iptables", "--version")
+-	}
++	cmd = exec.Command("@iptables@/bin/iptables", "--version")
+ 
+ 	bytes, err := cmd.CombinedOutput()
+ 	if err != nil {
+@@ -107,7 +103,7 @@ func doBindMount(rootfs string, m *configs.Mount) error {
+ 			// bind-mounting a source dir that is on a shiftfs mount on top of a tmpfs
+ 			// mount. For some reason the Linux "mount" command does not fail in this case,
+ 			// so let's try it.
+-			cmd := exec.Command("/bin/mount", "--rbind", m.Source, procfd)
++			cmd := exec.Command("@utillinux@/bin/mount", "--rbind", m.Source, procfd)
+ 			err := cmd.Run()
+ 			if err != nil {
+ 				realpath, _ := os.Readlink(procfd)
+@@ -143,11 +139,7 @@ func doDockerDnsSwitch(oldDns, newDns string) error {
+ 	)
+ 
+ 	// Get current iptables
+-	if _, err := os.Stat("/usr/sbin/iptables-save"); os.IsNotExist(err) {
+-		cmd = exec.Command("/sbin/iptables-save")
+-	} else {
+-		cmd = exec.Command("/usr/sbin/iptables-save")
+-	}
++	cmd = exec.Command("@iptables@/bin/iptables-save")
+ 
+ 	cmd.Stdout = &cmdOut
+ 	cmd.Stderr = &cmdErr
+@@ -192,10 +184,7 @@ func doDockerDnsSwitch(oldDns, newDns string) error {
+ 		return err
+ 	}
+ 
+-	iptablesRestorePath := "/usr/sbin/iptables-restore"
+-	if _, err = os.Stat(iptablesRestorePath); os.IsNotExist(err) {
+-		iptablesRestorePath = "/sbin/iptables-restore"
+-	}
++	iptablesRestorePath := "@iptables@/bin/iptables-restore"
+ 
+ 	if iptablesRestoreHasWait {
+ 
