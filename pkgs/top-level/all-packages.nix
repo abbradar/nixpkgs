@@ -32656,6 +32656,8 @@ with pkgs;
 
   swayest-workstyle = callPackage ../applications/window-managers/sway/swayest-workstyle { };
 
+  sysbox = callPackage ../applications/virtualization/sysbox { };
+
   tiramisu = callPackage ../applications/misc/tiramisu { };
 
   rlaunch = callPackage ../applications/misc/rlaunch { };
