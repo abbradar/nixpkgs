@@ -82,6 +82,14 @@ in
       '';
     };
 
+    enableSysbox = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Enable Sysbox Docker runtime.
+      '';
+    };
+
     enableNvidia = mkOption {
       type = types.bool;
       default = false;
@@ -349,16 +357,25 @@ in
         hosts = [ "fd://" ];
         log-driver = mkDefault cfg.logDriver;
         storage-driver = mkIf (cfg.storageDriver != null) (mkDefault cfg.storageDriver);
-        runtimes = mkIf cfg.enableNvidia {
-          nvidia = {
+        runtimes = {
+          nvidia = mkIf cfg.enableNvidia {
             # Use the legacy nvidia-container-runtime wrapper to allow
             # the `--runtime=nvidia` approach to expose
             # GPU's. Starting with Docker > 25, CDI can be used
             # instead, removing the need for runtime wrappers.
             path = lib.getExe' (lib.getOutput "tools" config.hardware.nvidia-container-toolkit.package) "nvidia-container-runtime";
           };
+          sysbox-runc = mkIf cfg.enableSysbox {
+            path = "${pkgs.sysbox}/bin/sysbox-runc";
+          };
         };
       };
     }
+    (mkIf cfg.enableSysbox {
+      systemd.packages = [ pkgs.sysbox ];
+      systemd.services.sysbox.wantedBy = [ "multi-user.target" ];
+      systemd.services.sysbox-mgr.path = with pkgs; [ rsync kmod iptables ];
+      systemd.services.sysbox-fs.path = with pkgs; [ fuse ];
+    })
   ]);
 }
