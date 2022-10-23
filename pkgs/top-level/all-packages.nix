@@ -8633,6 +8633,8 @@ with pkgs;
 
   sway-contrib = recurseIntoAttrs (callPackages ../applications/misc/sway-contrib { });
 
+  sysbox = callPackage ../applications/virtualization/sysbox { };
+
   ikiwiki = callPackage ../applications/misc/ikiwiki {
     inherit
       (perlPackages.override {
