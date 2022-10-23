@@ -76,6 +76,15 @@ in
         '';
       };
 
+    enableSysbox =
+      mkOption {
+        type = types.bool;
+        default = false;
+        description = lib.mkDoc ''
+          Enable Sysbox Docker runtime.
+        '';
+      };
+
     liveRestore =
       mkOption {
         type = types.bool;
@@ -246,13 +255,22 @@ in
         log-driver = mkDefault cfg.logDriver;
         storage-driver = mkIf (cfg.storageDriver != null) (mkDefault cfg.storageDriver);
         live-restore = mkDefault cfg.liveRestore;
-        runtimes = mkIf cfg.enableNvidia {
-          nvidia = {
+        runtimes = {
+          nvidia = mkIf cfg.enableNvidia {
             path = "${pkgs.nvidia-docker}/bin/nvidia-container-runtime";
+          };
+          sysbox-runc = mkIf cfg.enableSysbox {
+            path = "${pkgs.sysbox}/bin/sysbox-runc";
           };
         };
       };
     }
+    (mkIf cfg.enableSysbox {
+      systemd.packages = [ pkgs.sysbox ];
+      systemd.services.sysbox.wantedBy = [ "multi-user.target" ];
+      systemd.services.sysbox-mgr.path = with pkgs; [ rsync kmod iptables ];
+      systemd.services.sysbox-fs.path = with pkgs; [ fuse ];
+    })
   ]);
 
   imports = [
