@@ -257,6 +257,7 @@ mkdir -p /lib
 ln -s @modulesClosure@/lib/modules /lib/modules
 ln -s @modulesClosure@/lib/firmware /lib/firmware
 echo @extraUtils@/bin/modprobe > /proc/sys/kernel/modprobe
+@preModuleCommands@
 for i in @kernelModules@; do
     info "loading module $(basename $i)..."
     modprobe $i
