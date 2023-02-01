@@ -259,6 +259,7 @@ done
 
 # Load the required kernel modules.
 echo @extraUtils@/bin/modprobe > /proc/sys/kernel/modprobe
+@preModuleCommands@
 for i in @kernelModules@; do
     info "loading module $(basename $i)..."
     modprobe $i
