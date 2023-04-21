@@ -2507,6 +2507,8 @@ with pkgs;
 
   josh = callPackage ../applications/version-management/josh { };
 
+  ki = python3.pkgs.callPackage ../applications/version-management/ki { };
+
   lab = callPackage ../applications/version-management/lab { };
 
   labctl = callPackage ../tools/networking/labctl { };
