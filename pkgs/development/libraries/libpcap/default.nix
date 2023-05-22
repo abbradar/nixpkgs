@@ -30,10 +30,8 @@ stdenv.mkDerivation rec {
     hash = "sha256-7RmgOD+tcuOtQ1/SOdfNgNZJFrhyaVUBWdIORxYOvl8=";
   };
 
-  buildInputs = lib.optionals withRemote [ libxcrypt ];
-
-  # pkg-config dependency.
-  propagatedBuildInputs = lib.optionals stdenv.isLinux [ libnl ];
+  buildInputs = lib.optionals stdenv.isLinux [ libnl ]
+    ++ lib.optionals withRemote [ libxcrypt ];
 
   nativeBuildInputs = [ flex bison ]
     ++ lib.optionals stdenv.isLinux [ pkg-config ]
