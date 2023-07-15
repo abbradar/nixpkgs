@@ -19,6 +19,7 @@
 , gnat-bootstrap ? null
 , enableMultilib ? false
 , enablePlugin ? stdenv.hostPlatform == stdenv.buildPlatform # Whether to support user-supplied plug-ins
+, disableGdbPlugin ? false
 , name ? "gcc"
 , libcCross ? null
 , threadsCross ? null # for MinGW
