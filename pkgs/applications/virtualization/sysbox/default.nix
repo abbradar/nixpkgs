@@ -5,7 +5,7 @@
 }:
 
 let
-  version = "0.5.2";
+  version = "0.6.2";
 
   src = runCommand "sysbox-src-${version}" {
     nativeBuildInputs = [
@@ -16,7 +16,7 @@ let
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "sha256-HNtZ10517oLGHTTRtI+zkK/1dOuig5IL1QBFK0TGovE=";
+    outputHash = "sha256-aXG8z32A5xeKhjiuShz575dO5SIp72nb4bdtT1DWjLc=";
   } ''
     # Fetch the repository.
     git clone --depth 1 -b "v${version}" https://github.com/nestybox/sysbox
@@ -54,7 +54,7 @@ in stdenv.mkDerivation {
 
   data = fetchurl {
     url = "https://downloads.nestybox.com/sysbox/releases/v${version}/sysbox-ce_${version}-0.linux_amd64.deb";
-    sha256 = "sha256-8T/A4Vb3LG+L1I4gbFlIL4PxmswilwHHTg8juq+nJNg=";
+    sha256 = "sha256-/Sh/LztaBytiw3j54e7uqizK0iu0jLOB0w2MhVxRtAE=";
   };
 
   nativeBuildInputs = [ go protobuf go-protobuf autoconf automake libtool ];
@@ -74,9 +74,6 @@ in stdenv.mkDerivation {
   '';
 
   postPatch = ''
-    cd sysbox-mgr
-    patch -p1 < ${./nixos-kernel-modules.patch}
-    cd -
     cd sysbox-runc
     patch -p1 < ${./nixos-utils.patch}
     substituteInPlace libcontainer/rootfs_init_linux.go \
