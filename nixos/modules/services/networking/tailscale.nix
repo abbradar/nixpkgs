@@ -124,6 +124,8 @@ in {
     networking.firewall.checkReversePath = mkIf (cfg.useRoutingFeatures == "client" || cfg.useRoutingFeatures == "both") "loose";
 
     networking.dhcpcd.denyInterfaces = [ cfg.interfaceName ];
+    networking.networkmanager.unmanaged = [ cfg.interfaceName ];
+    systemd.network.wait-online.ignoredInterfaces = [ cfg.interfaceName ];
 
     systemd.network.networks."50-tailscale" = mkIf isNetworkd {
       matchConfig = {
