@@ -54,12 +54,12 @@ let
 
   oneapi-openmp = fetchurl {
     url = "https://yum.repos.intel.com/oneapi/intel-oneapi-openmp-${mklVersion}-${mklVersion}-${openmpRel}.x86_64.rpm";
-    hash = "sha256-1SlkI01DxFvwGPBJ73phs86ka0SmCrniwiXQ9DJwIXw=";
+    hash = "sha256-ot/jEHMisp2AwUsIGqECIQ0+CNIJ1QwwS6SaPc8KAjk=";
   };
 
   oneapi-tbb = fetchurl {
     url = "https://yum.repos.intel.com/oneapi/intel-oneapi-tbb-${tbbVersion}-${tbbVersion}-${tbbRel}.x86_64.rpm";
-    hash = "sha256-wIktdf1p1SS1KrnUlc8LPkm0r9dhZE6cQNr4ZKTWI6A=";
+    hash = "sha256-pzJpQdiYVpcKDShePak2I0uEh7u08vJgX7OBF5p5yAM";
   };
 
 in stdenvNoCC.mkDerivation ({
