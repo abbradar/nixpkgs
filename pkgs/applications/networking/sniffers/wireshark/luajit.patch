@@ -1,0 +1,12 @@
+diff -ru3 source-old/epan/wslua/init_wslua.c source-new/epan/wslua/init_wslua.c
+--- source-old/epan/wslua/init_wslua.c	1970-01-01 07:00:01.000000000 +0700
++++ source-new/epan/wslua/init_wslua.c	2023-11-17 09:02:00.464688130 +0700
+@@ -955,7 +955,7 @@
+     wslua_logger = ops ? ops->logger : basic_logger;
+ 
+     if (!L) {
+-        L = lua_newstate(wslua_allocf, NULL);
++        L = luaL_newstate();
+     }
+ 
+     WSLUA_INIT(L);

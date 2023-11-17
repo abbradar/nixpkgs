@@ -46,9 +46,12 @@
 
 , withQt ? true
 , qt6 ? null
+, withLuaJIT ? true
+, luajit ? null
 }:
 
 assert withQt -> qt6 != null;
+assert withLuaJIT -> luajit != null;
 
 stdenv.mkDerivation rec {
   pname = "wireshark-${if withQt then "qt" else "cli"}";
@@ -65,7 +68,7 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./wireshark-lookup-dumpcap-in-path.patch
-  ];
+  ] ++ lib.optional withLuaJIT ./luajit.patch;
 
   depsBuildBuild = lib.optionals (stdenv.buildPlatform != stdenv.hostPlatform) [
     buildPackages.stdenv.cc
@@ -90,7 +93,7 @@ stdenv.mkDerivation rec {
     gettext
     pcre2
     libpcap
-    lua5
+    (if withLuaJIT then luajit else lua5)
     libssh
     nghttp2
     openssl
@@ -157,6 +160,11 @@ stdenv.mkDerivation rec {
 
   postPatch = ''
     sed -i -e '1i cmake_policy(SET CMP0025 NEW)' CMakeLists.txt
+  '' + lib.optionalString withLuaJIT ''
+    cat > cmake/modules/FindLUA.cmake <<EOF
+    find_package(PkgConfig)
+    pkg_search_module(LUA luajit)
+    EOF
   '';
 
   postInstall = ''
