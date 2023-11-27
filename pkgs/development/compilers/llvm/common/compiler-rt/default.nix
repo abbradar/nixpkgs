@@ -15,6 +15,9 @@
 , linuxHeaders
 , libxcrypt
 
+, enableInstrumentation ? false
+, withProfdata ? null
+
 # Some platforms have switched to using compiler-rt, but still want a
 # libgcc.a for ABI compat purposes. The use case would be old code that
 # expects to link `-lgcc` but doesn't care exactly what its contents
@@ -28,6 +31,8 @@
 , forceLinkCompilerRt ? stdenv.hostPlatform.isOpenBSD
 }:
 
+assert (lib.assertMsg (enableInstrumentation -> stdenv.cc.isClang) "Instrumentation is only supported when compiling with Clang");
+assert (lib.assertMsg (withProfdata != null -> stdenv.cc.isClang) "Profiling data is only supported when compiling with Clang");
 let
 
   useLLVM = stdenv.hostPlatform.useLLVM or false;
@@ -118,6 +123,11 @@ stdenv.mkDerivation ({
     "-DCOMPILER_RT_ENABLE_IOS=OFF"
   ]) ++ lib.optionals (lib.versionAtLeast version "19" && stdenv.isDarwin && lib.versionOlder stdenv.hostPlatform.darwinMinVersion "10.13") [
     "-DSANITIZER_MIN_OSX_VERSION=10.10"
+  ] ++ lib.optionals enableInstrumentation [
+    "-DLLVM_BUILD_INSTRUMENTED=IR"
+    "-DLLVM_BUILD_RUNTIME=No"
+  ] ++ lib.optionals (withProfdata != null) [
+    "-DLLVM_PROFDATA_FILE=${withProfdata}"
   ];
 
   outputs = [ "out" "dev" ];

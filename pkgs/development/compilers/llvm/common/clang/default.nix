@@ -17,7 +17,12 @@
 , fixDarwinDylibNames
 , enableManpages ? false
 , clang-tools-extra_src ? null
+, enableInstrumentation ? false
+, withProfdata ? null
 }:
+
+assert (lib.assertMsg (enableInstrumentation -> stdenv.cc.isClang) "Instrumentation is only supported when compiling with Clang");
+assert (lib.assertMsg (withProfdata != null -> stdenv.cc.isClang) "Profiling data is only supported when compiling with Clang");
 
 let
   pname = "clang";
@@ -47,6 +52,8 @@ let
 
     buildInputs = [ libxml2 libllvm ];
 
+    NIX_CFLAGS_COMPILE = (finalAttrs.NIX_CLAGS_COMPILE or []) ++ lib.optionals enableInstrumentation ["-fprofile-instr-generate"];
+
     cmakeFlags = (lib.optionals (lib.versionAtLeast release_version "15") [
       "-DCLANG_INSTALL_PACKAGE_DIR=${placeholder "dev"}/lib/cmake/clang"
     ]) ++ [
@@ -69,7 +76,12 @@ let
       # `clang-pseudo-gen`: https://github.com/llvm/llvm-project/commit/cd2292ef824591cc34cc299910a3098545c840c7
       "-DCLANG_TIDY_CONFUSABLE_CHARS_GEN=${buildLlvmTools.libclang.dev}/bin/clang-tidy-confusable-chars-gen"
       "-DCLANG_PSEUDO_GEN=${buildLlvmTools.libclang.dev}/bin/clang-pseudo-gen"
-    ]);
+     ] ++ lib.optionals enableInstrumentation [
+       "-DLLVM_BUILD_INSTRUMENTED=IR"
+       "-DLLVM_BUILD_RUNTIME=No"
+     ] ++ lib.optionals (withProfdata != null) [
+       "-DLLVM_PROFDATA_FILE=${withProfdata}"
+     ]);
 
     postPatch = ''
       # Make sure clang passes the correct location of libLTO to ld64
