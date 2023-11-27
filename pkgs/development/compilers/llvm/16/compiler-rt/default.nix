@@ -2,6 +2,7 @@
 , monorepoSrc, runCommand
 , cmake, ninja, python3, xcbuild, libllvm, libcxxabi, libxcrypt
 , doFakeLibgcc ? stdenv.hostPlatform.isFreeBSD
+, enableInstrumentation ? false
 }:
 
 let
@@ -80,6 +81,8 @@ stdenv.mkDerivation {
     # `COMPILER_RT_DEFAULT_TARGET_ONLY` does not apply to Darwin:
     # https://github.com/llvm/llvm-project/blob/27ef42bec80b6c010b7b3729ed0528619521a690/compiler-rt/cmake/base-config-ix.cmake#L153
     "-DCOMPILER_RT_ENABLE_IOS=OFF"
+  ] ++ optionals enableInstrumentation [
+    "-DLLVM_BUILD_INSTRUMENTED=IR"
   ];
 
   outputs = [ "out" "dev" ];

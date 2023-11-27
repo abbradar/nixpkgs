@@ -31,6 +31,7 @@
   # broken for the armv7l builder
   && !stdenv.hostPlatform.isAarch
 , enablePolly ? true
+, enableInstrumentation ? false
 } @args:
 
 let
@@ -361,6 +362,8 @@ in
         nativeInstallFlags
       ])
     )
+  ] ++ optionals enableInstrumentation [
+    "-DLLVM_BUILD_INSTRUMENTED=IR"
   ];
 
   postInstall = ''
