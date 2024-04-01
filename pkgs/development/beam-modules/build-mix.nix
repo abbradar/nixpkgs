@@ -112,7 +112,7 @@ let
     # it is however needed for dependencies with NIFs like bcrypt for example
     dontStrip = false;
 
-    passthru = {
+    passthru = attrs.passthru or {} // {
       packageName = name;
       env = shell self;
       inherit beamDeps;
