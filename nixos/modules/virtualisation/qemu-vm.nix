@@ -75,8 +75,11 @@ let
       device =
         if cfg.qemu.diskInterface == "scsi" then
           "-device lsi53c895a -device scsi-hd,${deviceOpts}"
-        else
-          "-device virtio-blk-pci,${deviceOpts}";
+        else if cfg.qemu.diskInterface == "sata" then
+          "-device ich9-ahci -device ide-hd,${deviceOpts}"
+        else if cfg.qemu.diskInterface == "virtio" then
+          "-device virtio-blk-pci,${deviceOpts}"
+        else throw "Unknown disk interface: ${cfg.qemu.diskInterface}";
     in
       "-drive ${driveOpts} ${device}";
 
@@ -743,7 +746,7 @@ in
 
       diskInterface =
         mkOption {
-          type = types.enum [ "virtio" "scsi" "ide" ];
+          type = types.enum [ "virtio" "scsi" "sata" ];
           default = "virtio";
           example = "scsi";
           description = "The interface used for the virtual hard disks.";
@@ -1095,6 +1098,7 @@ in
     boot.initrd.availableKernelModules =
       optional cfg.writableStore "overlay"
       ++ optional (cfg.qemu.diskInterface == "scsi") "sym53c8xx"
+      ++ optional (cfg.qemu.diskInterface == "sata") "ahci"
       ++ optional (cfg.tpm.enable) "tpm_tis";
 
     virtualisation.additionalPaths = [ config.system.build.toplevel ];
