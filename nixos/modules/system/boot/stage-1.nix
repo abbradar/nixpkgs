@@ -499,7 +499,7 @@ in
     boot.initrd.preModuleCommands = mkOption {
       default = "";
       type = types.lines;
-      description = lib.mdDoc ''
+      description = ''
         Shell commands to be executed immediately before loading kernel modules.
       '';
     };
