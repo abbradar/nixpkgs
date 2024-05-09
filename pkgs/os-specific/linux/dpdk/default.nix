@@ -1,7 +1,7 @@
 { stdenv, lib
 , fetchurl
 , pkg-config, meson, ninja, makeWrapper
-, libbsd, numactl, libbpf, zlib, elfutils, jansson, openssl, libpcap, rdma-core
+, libbsd, numactl, libbpf, zlib, elfutils, zstd, jansson, openssl, libpcap, rdma-core
 , doxygen, python3, iproute2, which, pciutils
 , withExamples ? []
 , shared ? false
@@ -49,6 +49,7 @@ stdenv.mkDerivation rec {
     # Requested by pkg-config.
     libbsd
     elfutils
+    zstd
     libpcap
     openssl
     numactl
