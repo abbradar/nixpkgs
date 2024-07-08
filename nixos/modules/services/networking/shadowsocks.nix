@@ -15,7 +15,6 @@ let
     server_port = cfg.port;
     method = cfg.encryptionMethod;
     mode = cfg.mode;
-    user = "nobody";
     fast_open = cfg.fastOpen;
   }
   // optionalAttrs (cfg.plugin != null) {
@@ -197,10 +196,16 @@ in
       ]
       ++ optional (cfg.plugin != null) cfg.plugin
       ++ optional (cfg.passwordFile != null) pkgs.jq;
-      serviceConfig.PrivateTmp = true;
+      serviceConfig = {
+        PrivateTmp = true;
+        DynamicUser = true;
+        LoadCredential = mkIf (cfg.passwordFile != null) ["password:${cfg.passwordFile}"];
+        # Has issues with several clients otherwise.
+        LimitNOFILE = 32768;
+      };
       script = ''
         ${optionalString (cfg.passwordFile != null) ''
-          cat ${configFile} | jq --arg password "$(cat "${cfg.passwordFile}")" '. + { password: $password }' > /tmp/shadowsocks.json
+          cat ${configFile} | jq --arg password "$(cat "$CREDENTIALS_DIRECTORY/password")" '. + { password: $password }' > /tmp/shadowsocks.json
         ''}
         exec ${(executablesMap.${getName cfg.package}).server} -c ${
           if cfg.passwordFile != null then "/tmp/shadowsocks.json" else configFile
