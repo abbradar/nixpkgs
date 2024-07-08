@@ -3,6 +3,7 @@
   stdenv,
   fetchFromGitHub,
   openssl,
+  gawk,
   makeWrapper,
   runtimeShell,
 }:
@@ -34,7 +35,8 @@ stdenv.mkDerivation (finalAttrs: {
 
     # Wrap it with the correct OpenSSL binary.
     wrapProgram $out/bin/easyrsa \
-      --set-default EASYRSA_OPENSSL ${openssl.bin}/bin/openssl
+      --set-default EASYRSA_OPENSSL ${openssl.bin}/bin/openssl \
+      --prefix PATH ':' ${lib.makeBinPath [gawk]}
 
     # Helper utility
     cat > $out/bin/easyrsa-init <<EOF
