@@ -110,7 +110,7 @@ EOFCHECKS
 }
 
 # Install or update the bootloader.
-if ($action eq "switch" || $action eq "boot") {
+if (($ENV{"NIXOS_NO_BOOTLOADER"} // "") ne "1" && ($action eq "switch" || $action eq "boot")) {
     chomp(my $install_boot_loader = <<'EOFBOOTLOADER');
 @installBootLoader@
 EOFBOOTLOADER
