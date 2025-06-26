@@ -131,11 +131,11 @@ let
       };
 
       options = mkOption {
-        type = types.attrsOf types.str;
+        type = types.attrsOf (types.either types.str types.int);
         default = { };
         example = {
-          mtu = "1492";
-          window = "524288";
+          mtu = 1492;
+          window = 524288;
         };
         description = ''
           Other route options. See the symbol `OPTIONS`
