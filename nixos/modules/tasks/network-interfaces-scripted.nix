@@ -285,7 +285,7 @@ let
                 let
                   cidr = "${route.address}/${toString route.prefixLength}";
                   via = optionalString (route.via != null) ''via "${route.via}"'';
-                  options = concatStrings (mapAttrsToList (name: val: "${name} ${val} ") route.options);
+                  options = concatStrings (mapAttrsToList (name: val: "${name} ${toString val} ") route.options);
                   type = toString route.type;
                 in
                 ''
